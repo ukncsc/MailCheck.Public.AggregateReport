@@ -1,0 +1,68 @@
+{
+  "providerAliases": [
+    {
+      "provider": "testProvider",
+      "mapping": "testAlias"
+    },
+    {
+      "provider": "outlook.com",
+      "mapping": "Microsoft Office 365"
+    },
+    {
+      "provider": "Blocklisted",
+      "mapping": "Source IP on DNS Block List"
+    },
+    {
+      "provider": "Unrouted",
+      "mapping": "Unrouted - Prefix not advertised to the internet"
+    },
+    {
+      "provider": "",
+      "mapping": "Provider lookup failed"
+    }
+  ],
+
+  "providerMarkdowns": [
+    {
+      "provider": "testProvider",
+      "mapping": "testMarkdown"
+    },
+    {
+      "provider": "google.com",
+      "mapping": "If you don't use Google to send email, this traffic is likely to be caused by the use of Google Groups and other forwarding by Google.
+
+Google Groups is a legitimate online forum and email distribution service. You may see Groups email traffic in your reports even if you don't use Google to send email.
+
+When Groups forwards email it checks your DMARC record. 
+If your policy is:  
+
+* p=none - it spoofs your original domain, which may then fail SPF and DKIM checks
+* p=quarantine or p=reject - it does not spoof your domain
+
+Change your DMARC policy to p=quarantine and pct=0. This policy is the same as p=none but stops Groups spoofing your domain."
+    },
+    {
+      "provider": "Blocklisted",
+      "mapping": "Mail Check has grouped traffic from IP addresses that appear on public Domain Name System-based Block Lists (DNSBL). When a source IP address on the internet is observed sending spam or malware, mail server operators report to these lists.
+
+This grouping in Mail Check helps because it removes the noise from your analysis – so you can better see email systems that need configuring. It also highlights issues of domain spoofing, which can help you get support from your organisation for strengthening DMARC controls.
+
+NCSC have no control over these data sources. Like any automatically generated list there are likely to be false positives and false negatives. Not all spoofed email will appear in this category in Mail Check; only those that have been identified in these lists. You may also find your legitimate mail ends up being reported as spam - your service provider should be able to advise you on getting off these lists and how to avoid them in future.
+
+We currently check the following lists:
+* sorbs.net (http://www.sorbs.net/)
+* spamhaus.org (https://www.spamhaus.org/sbl/)
+* backscatterer.org (http://www.backscatterer.org/)
+* spfbl.net (https://spfbl.net/en/dnsbl/)
+* fullbogons.cymru.com (https://team-cymru.com/community-services/bogon-reference/)
+* wormrbl.imp.ch (https://antispam.imp.ch/)
+* spamrbl.imp.ch (https://antispam.imp.ch/)"
+    },
+    {
+      "provider": "Unrouted",
+      "mapping": "Mail Check attempts to find a provider from an IP address by first doing a Reverse DNS lookup and then doing an Autonomous System lookup for the IP. If neither of these return anything we mark the provider as 'Unrouted - prefix not advertised to the internet' as this IP has no Autonomous System information.
+
+You should still be able to perform a 'whois' lookup on this IP address if you would like more information. We are also working on including this into Mail Check."
+    }
+  ]
+}

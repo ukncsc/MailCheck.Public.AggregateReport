@@ -1,0 +1,60 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Scripts\2019-03-06-1419_create_initial_schema.sql" />
+    <None Remove="Scripts\2019-03-06-1454_create_initial_grants.sql" />
+    <None Remove="Scripts\2019-08-13-0910_domain_date_aggregation.sql" />
+    <None Remove="Scripts\2019-08-13-0911_domain_date_aggregation_grants.sql" />
+    <None Remove="Scripts\2019-08-09-1020_policy_override_enum.sql" />
+    <None Remove="Scripts\2019-08-14-1154_add_domain_date_provider_aggregation.sql" />
+    <None Remove="Scripts\2019-08-15-1605_add_domain_date_provider_aggregation_grants.sql" />
+    <None Remove="Scripts\2019-08-15-1731_add_domain_date_provider_rollup_aggregation.sql" />
+    <None Remove="Scripts\2019-08-15-1732_add_domain_date_provider_rollup_aggregation_grants.sql" />
+    <None Remove="Scripts\2019-09-09-1326_add_spf_dkim_policy_override_grants.sql" />
+    <None Remove="Scripts\2019-11-01-1220_add_domain_date_provider_ip_aggregation_original_provider.sql" />
+    <None Remove="Scripts\2020-05-29-1847_temp_table_grants.sql" />
+    <None Remove="Scripts\everytime\grants.sql" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\2019-08-15-1731_add_domain_date_provider_rollup_aggregation.sql" />
+    <EmbeddedResource Include="Scripts\2019-08-15-1732_add_domain_date_provider_rollup_aggregation_grants.sql" />
+    <EmbeddedResource Include="Scripts\2019-08-15-1605_add_domain_date_provider_aggregation_grants.sql" />
+    <EmbeddedResource Include="Scripts\2019-08-14-1154_add_domain_date_provider_aggregation.sql" />
+    <EmbeddedResource Include="Scripts\2019-08-13-0911_domain_date_aggregation_grants.sql" />
+    <EmbeddedResource Include="Scripts\2019-08-13-0910_domain_date_aggregation.sql" />
+    <EmbeddedResource Include="Scripts\2019-08-09-1020_policy_override_enum.sql" />
+    <EmbeddedResource Include="Scripts\2019-03-06-1454_create_initial_grants.sql" />
+    <EmbeddedResource Include="Scripts\2019-03-06-1419_create_initial_schema.sql" />
+    <EmbeddedResource Include="Scripts\2019-08-15-1500_domain_date_rollup_aggregation.sql" />
+    <EmbeddedResource Include="Scripts\2019-08-15-1501_domain_date_rollup_aggregation_grants.sql" />
+    <EmbeddedResource Include="Scripts\2019-11-28-1118_add_eslr_table.sql" />
+    <EmbeddedResource Include="Scripts\2019-11-28-1119_add_eslr_table_grants.sql" />
+    <EmbeddedResource Include="Scripts\2019-11-01-1220_add_domain_date_provider_ip_aggregation_original_provider.sql" />
+    <EmbeddedResource Include="Scripts\2019-09-30-1242_add_domain_date_provider_ip_aggregation_grants.sql" />
+    <EmbeddedResource Include="Scripts\2019-09-09-1326_add_spf_dkim_policy_override_grants.sql" />
+    <EmbeddedResource Include="Scripts\2019-08-23-1657_add_domain_date_provider_subdomain_aggregation.sql" />
+    <EmbeddedResource Include="Scripts\2019-08-23-1658_add_domain_date_provider_subdomain_aggregation_grants.sql" />
+    <EmbeddedResource Include="Scripts\2019-09-30-1241_add_domain_date_provider_ip_aggregation.sql" />
+    <EmbeddedResource Include="Scripts\2019-10-10-1150_add_domain_date_provider_ip_spf_aggregation.sql" />
+    <EmbeddedResource Include="Scripts\2019-10-10-1151_add_domain_date_provider_ip_spf_aggregation_grants.sql" />
+    <EmbeddedResource Include="Scripts\2019-10-15-1509_alter_domain_date_provider_ip_aggregation.sql" />
+    <EmbeddedResource Include="Scripts\2019-10-17-1735_alter_domain_date_provider_ip_aggregation_fix.sql" />
+    <EmbeddedResource Include="Scripts\2019-10-22-1644_add_domain_date_provider_ip_dkim_aggregation.sql" />
+    <EmbeddedResource Include="Scripts\2019-10-22-1645_add_domain_date_provider_ip_dkim_aggregation_grants.sql" />
+    <EmbeddedResource Include="Scripts\2020-05-29-1847_temp_table_grants.sql" />
+    <EmbeddedResource Include="Scripts\2020-07-02-1703_alter_eslr_table_blocklist.sql" />
+    <EmbeddedResource Include="Scripts\2020-07-02-1704_alter_domain_date_provider_ip_aggregation_blocklist.sql" />
+    <EmbeddedResource Include="Scripts\everytime\grants.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MailCheck.Common.Data.Migration" Version="4.3.0" />
+  </ItemGroup>
+
+</Project>

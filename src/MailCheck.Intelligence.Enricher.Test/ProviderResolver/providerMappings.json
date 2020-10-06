@@ -1,0 +1,23 @@
+{
+  "ipAddressProviderMappings": [
+    {
+      "mappings": [ "TestIpAddressThatMaps" ],
+      "provider": "ProviderMappedByIp"
+    },
+    {
+      "mappings": [ "51.64.0.0/16", "62.208.251.0/24" ],
+      "provider": "Legacy Police National Network (PNN) SCN"
+    },
+    {
+      "mappings": [ "127.0.0.1" ],
+      "provider": "Localhost"
+    }
+  ],
+
+  "orgDomainProviderMappings": [
+    {
+      "mappings": [ "TestOrgDomainThatMaps" ],
+      "provider": "ProviderMappedByOrgDomain"
+    }
+  ]
+}

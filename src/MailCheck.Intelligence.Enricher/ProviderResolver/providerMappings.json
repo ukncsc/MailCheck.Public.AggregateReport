@@ -1,0 +1,103 @@
+{
+  "ipAddressProviderMappings": [
+    {
+      "mappings": ["51.33.0.0/16", "51.130.0.0/16", "51.147.0.0/16"],
+      "provider": "PSN Assured (Owned by PSN Team)"
+    },
+    {
+      "mappings": [
+        "51.231.0.0/16",
+        "51.238.0.0/16",
+        "51.239.0.0/16",
+        "51.242.0.0/16",
+        "51.243.0.0/16",
+        "51.247.0.0/16"
+      ],
+      "provider": "PSN Protected (Owned by PSN Team)"
+    },
+    {
+      "mappings": ["88.64.20.0/24"],
+      "provider": "PSN Assured (Owned by Unify)"
+    },
+    {
+      "mappings": ["88.64.21.0/24"],
+      "provider": "PSN Protected (Owned by Unify)"
+    },
+    {
+      "mappings": [
+        "109.234.170.0/24",
+        "109.234.171.0/24",
+        "109.234.172.0/24",
+        "109.234.174.0/24"
+      ],
+      "provider": "PSN Assured (Owned by Thales)"
+    },
+    {
+      "mappings": ["109.234.173.0/24", "109.234.175.0/24", "188.92.140.128/25"],
+      "provider": "PSN Protected (Owned by Thales)"
+    },
+    {
+      "mappings": [
+        "137.221.131.248/29",
+        "137.221.133.32/29",
+        "137.221.176.0/21"
+      ],
+      "provider": "PSN Assured (Owned by Convergence Group)"
+    },
+    {
+      "mappings": ["5.153.248.0/24"],
+      "provider": "PSN Protected (Owned by Memset)"
+    },
+    {
+      "mappings": [
+        "20.146.120.128/25",
+        "20.146.248.128/25",
+        "155.231.0.0/16",
+        "194.189.100.144/28",
+        "194.189.111.96/27",
+        "194.189.111.224/27",
+        "194.189.113.128/27"
+      ],
+      "provider": "NHS N3 network"
+    },
+    {
+      "mappings": ["51.62.0.0/18"],
+      "provider": "Legacy GCSX"
+    },
+    {
+      "mappings": ["51.63.0.0/16"],
+      "provider": "Legacy GSI, GSE, GSX, xGSI"
+    },
+    {
+      "mappings": ["51.64.0.0/16", "62.208.251.0/24"],
+      "provider": "Legacy Police National Network (PNN) SCN"
+    },
+    {
+      "mappings": ["51.67.224.0/19", "51.65.224.0/19"],
+      "provider": "Legacy Police National Network (PNN) Criminal Justice Extranet (CJX)"
+    },
+    {
+      "mappings": ["212.137.71.246", "51.140.112.54", "51.140.32.204"],
+      "provider": "Criminal Justice Secure Mail (CJSM)"
+    },
+    {
+      "mappings": ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"],
+      "provider": "Private Address Space (RFC1918)"
+    }
+  ],
+
+  "orgDomainProviderMappings": [
+    {
+      "mappings": [
+        "mcsv.net",
+        "mailchimp.com",
+        "mcdlv.net",
+        "rsgsv.net",
+        "tinyletterapp.com",
+        "mctxapp.net",
+        "mandrillapp.com"
+      ],
+      "provider": "MailChimp"
+    }
+  ]
+}

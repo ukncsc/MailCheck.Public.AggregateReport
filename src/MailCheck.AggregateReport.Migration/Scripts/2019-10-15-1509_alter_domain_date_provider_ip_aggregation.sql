@@ -1,0 +1,18 @@
+﻿ALTER TABLE domain_date_provider_ip
+    ADD spf_misaligned bigint not null,
+    ADD dkim_misaligned bigint not null,
+    ADD blacklists_proxy bigint not null,
+    ADD blacklists_hijackednetwork bigint not null,
+    ADD blacklists_suspiciousnetwork bigint not null,
+    ADD blacklists_endusernetwork bigint not null,
+    ADD blacklists_spamsource bigint not null,
+    ADD blacklists_malware bigint not null,
+    ADD blacklists_enduser bigint not null,
+    ADD blacklists_bouncereflector bigint not null,
+    ADD por_forwarded bigint not null,
+    ADD por_sampledout bigint not null,
+    ADD por_trustedforwarder bigint not null,
+    ADD por_mailinglist bigint not null,
+    ADD por_localpolicy bigint not null,
+    ADD por_arc bigint not null,
+    ADD por_other bigint not null;

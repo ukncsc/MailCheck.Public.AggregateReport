@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FakeItEasy" Version="4.8.0" />
+    <PackageReference Include="MailCheck.Common.Logging" Version="4.0.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
+    <PackageReference Include="NUnit" Version="3.10.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MailCheck.Intelligence.IpToAsnParser\MailCheck.Intelligence.IpToAsnParser.csproj" />
+    <ProjectReference Include="..\MailCheck.Intelligence.IpToAsnParser\MailCheck.Intelligence.IpToAsnParser.csproj" />
+  </ItemGroup>
+
+</Project>

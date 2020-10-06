@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <AWSProjectType>Lambda</AWSProjectType>
+  </PropertyGroup>
+  <ItemGroup>
+      <DotNetCliToolReference Include="Amazon.Lambda.Tools" Version="2.1.4" />
+    <PackageReference Include="Amazon.Lambda.Core" Version="1.1.0" />
+    <PackageReference Include="Amazon.Lambda.Serialization.Json" Version="1.4.0" />
+    <PackageReference Include="MailCheck.Common.Messaging" Version="4.0.0" />
+    <PackageReference Include="MailCheck.Common.SSM" Version="4.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MailCheck.AggregateReport.Common\MailCheck.AggregateReport.Common.csproj" />
+    <ProjectReference Include="..\MailCheck.AggregateReport.Contracts\MailCheck.AggregateReport.Contracts.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Dao\DateDomainProviderRollUpAggregatorDaoResources.Designer.cs">
+      <DependentUpon>DateDomainProviderRollUpAggregatorDaoResources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Dao\DateDomainProviderRollUpAggregatorDaoResources.resx">
+      <LastGenOutput>DateDomainProviderRollUpAggregatorDaoResources.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

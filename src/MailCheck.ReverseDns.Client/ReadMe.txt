@@ -1,0 +1,1 @@
+﻿This belongs to the ReverseDns microservice and should be moved there once nuget support has been added to that pipeline.

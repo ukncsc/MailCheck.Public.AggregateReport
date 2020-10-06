@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Scripts\2019-03-06-1419_create_initial_schema.sql" />
+    <None Remove="Scripts\2019-03-06-1454_create_initial_grants.sql" />
+    <None Remove="Scripts\2019-07-30-1045_ip_to_asn.sql" />
+    <None Remove="Scripts\2019-07-31-1030_asn_to_name.sql" />
+    <None Remove="Scripts\2019-08-02-0850_public_suffix.sql" />
+    <None Remove="Scripts\2019-07-31-1030_asn_to_description.sql" />
+    <None Remove="Scripts\2019-08-03-1500_ip_address_details.sql" />
+    <None Remove="Scripts\2019-09-12-1700_ip_address_details_new_columns.sql" />
+    <None Remove="Scripts\2019-09-30-1700_ip6_to_asn.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MailCheck.Common.Data.Migration" Version="4.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\2019-09-30-1700_ip6_to_asn.sql" />
+    <EmbeddedResource Include="Scripts\2019-08-02-0850_public_suffix.sql" />
+    <EmbeddedResource Include="Scripts\2019-09-12-1700_ip_address_details_new_columns.sql" />
+    <EmbeddedResource Include="Scripts\2019-08-03-1500_ip_address_details.sql" />
+    <EmbeddedResource Include="Scripts\2019-07-31-1030_asn_to_description.sql" />
+    <EmbeddedResource Include="Scripts\2019-07-30-1045_ip_to_asn.sql" />
+    <EmbeddedResource Include="Scripts\2020-07-07-1122_alter_ip_address_details.sql" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <AWSProjectType>Lambda</AWSProjectType>
+    <ApplicationIcon />
+    <OutputType>Exe</OutputType>
+    <StartupObject>MailCheck.AggregateReport.EslrSaver.LocalEntryPoint</StartupObject>
+    <LangVersion>7.1</LangVersion>
+    <RootNamespace>MailCheck.AggregateReport.EslrSaver</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Amazon.Lambda.Core" Version="1.1.0" />
+    <PackageReference Include="Amazon.Lambda.Serialization.Json" Version="1.4.0" />
+    <PackageReference Include="MailCheck.Common.Data" Version="4.0.0" />
+    <PackageReference Include="MailCheck.Common.Messaging" Version="4.0.0" />
+    <PackageReference Include="MailCheck.Common.SSM" Version="4.0.0" />
+    <PackageReference Include="MailCheck.Common.Util" Version="4.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MailCheck.AggregateReport.Common\MailCheck.AggregateReport.Common.csproj" />
+    <ProjectReference Include="..\MailCheck.AggregateReport.Contracts\MailCheck.AggregateReport.Contracts.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Dao\EslrSaverDaoResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>EslrSaverDaoResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <DotNetCliToolReference Include="Amazon.Lambda.Tools" Version="2.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Dao\EslrSaverDaoResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>EslrSaverDaoResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>

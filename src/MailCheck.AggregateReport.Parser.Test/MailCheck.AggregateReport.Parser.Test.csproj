@@ -1,0 +1,125 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <AssemblyName>Dmarc.AggregateReport.Parser.Lambda.Test</AssemblyName>
+    <PackageId>Dmarc.AggregateReport.Parser.Lambda.Test</PackageId>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Amazon.Lambda.Core" Version="1.1.0" />
+    <PackageReference Include="FakeItEasy" Version="4.8.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
+    <PackageReference Include="NUnit" Version="3.10.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove=".DS_Store" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MailCheck.AggregateReport.Parser\MailCheck.AggregateReport.Parser.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Serialisation\AggregateReportDeserialisation\AggregateReportDeserialiserTestsResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AggregateReportDeserialiserTestsResource.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Serialisation\AggregateReportDeserialisation\DkimAuthResultDeserialiserTestsResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DkimAuthResultDeserialiserTestsResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Serialisation\AggregateReportDeserialisation\IdentifiersDeserialiserTestsResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>IdentifiersDeserialiserTestsResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Serialisation\AggregateReportDeserialisation\PolicyEvaluatedDeserialiserTestsResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PolicyEvaluatedDeserialiserTestsResource.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Serialisation\AggregateReportDeserialisation\PolicyOverrideReasonDeserialserTestsResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PolicyOverrideReasonDeserialserTestsResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Serialisation\AggregateReportDeserialisation\PolicyPublishedDeserialiserTestsResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PolicyPublishedDeserialiserTestsResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Serialisation\AggregateReportDeserialisation\RecordDeserialiserTestsResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RecordDeserialiserTestsResource.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Serialisation\AggregateReportDeserialisation\ReportMetadataParserTestsResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ReportMetadataParserTestsResources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Serialisation\AggregateReportDeserialisation\RowDeserialiserTestsResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RowDeserialiserTestsResource.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Serialisation\AggregateReportDeserialisation\SpfAuthResultsDeserialiserTestsResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SpfAuthResultsDeserialiserTestsResource.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Serialisation\AggregateReportDeserialisation\AggregateReportDeserialiserTestsResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>AggregateReportDeserialiserTestsResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Serialisation\AggregateReportDeserialisation\DkimAuthResultDeserialiserTestsResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>DkimAuthResultDeserialiserTestsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Serialisation\AggregateReportDeserialisation\IdentifiersDeserialiserTestsResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>IdentifiersDeserialiserTestsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Serialisation\AggregateReportDeserialisation\PolicyEvaluatedDeserialiserTestsResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PolicyEvaluatedDeserialiserTestsResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Serialisation\AggregateReportDeserialisation\PolicyOverrideReasonDeserialserTestsResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PolicyOverrideReasonDeserialserTestsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Serialisation\AggregateReportDeserialisation\PolicyPublishedDeserialiserTestsResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PolicyPublishedDeserialiserTestsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Serialisation\AggregateReportDeserialisation\RecordDeserialiserTestsResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>RecordDeserialiserTestsResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Serialisation\AggregateReportDeserialisation\ReportMetadataParserTestsResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ReportMetadataParserTestsResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Serialisation\AggregateReportDeserialisation\RowDeserialiserTestsResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>RowDeserialiserTestsResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Serialisation\AggregateReportDeserialisation\SpfAuthResultsDeserialiserTestsResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SpfAuthResultsDeserialiserTestsResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

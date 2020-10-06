@@ -1,0 +1,199 @@
+﻿[
+  {
+    "suffix": ".dnsbl.sorbs.net",
+    "data": [
+      {
+        "ipAddress": "127.0.0.2",
+        "source": "http.dnsbl.sorbs.net",
+        "description": "Open HTTP proxy server",
+        "flag": "proxy"
+      },
+      {
+        "ipAddress": "127.0.0.3",
+        "source": "socks.dnsbl.sorbs.net",
+        "description": "Open SOCKS proxy server",
+        "flag": "proxy"
+      },
+      {
+        "ipAddress": "127.0.0.4",
+        "source": "misc.dnsbl.sorbs.net",
+        "description": "Open proxy server (other than HTTP/SOCKS)",
+        "flag": "proxy"
+      },
+      {
+        "ipAddress": "127.0.0.5",
+        "source": "smtp.dnsbl.sorbs.net",
+        "description": "Open SMTP relay server",
+        "flag": "proxy"
+      },
+      {
+        "ipAddress": "127.0.0.6",
+        "source": "spam.dnsbl.sorbs.net",
+        "description": "Reported spammer",
+        "flag": "spamsource"
+      },
+      {
+        "ipAddress": "127.0.0.7",
+        "source": "web.dnsbl.sorbs.net",
+        "description": "Spammer abusable vulnerability on server",
+        "flag": "proxy"
+      },
+      {
+        "ipAddress": "127.0.0.8",
+        "source": "block.dnsbl.sorbs.net",
+        "description": "Host demanding that they never be tested by SORBS.",
+        "flag": "suspiciousnetwork"
+      },
+      {
+        "ipAddress": "127.0.0.9",
+        "source": "zombie.dnsbl.sorbs.net",
+        "description": "Hijacked network",
+        "flag": "hijackednetwork"
+      },
+      {
+        "ipAddress": "127.0.0.10",
+        "source": "dul.dnsbl.sorbs.net",
+        "description": "Dynamic IP address",
+        "flag": "endusernetwork"
+      },
+      {
+        "ipAddress": "127.0.0.11",
+        "source": "badconf.rhsbl.sorbs.net",
+        "description": "Spammer abusable vulnerability on server",
+        "flag": "proxy"
+      },
+      {
+        "ipAddress": "127.0.0.12",
+        "source": "nomail.rhsbl.sorbs.net",
+        "description": "Mail server should not be present on this network",
+        "flag": "endusernetwork"
+      },
+      {
+        "ipAddress": "127.0.0.14",
+        "source": "noserver.dnsbl.sorbs.net",
+        "description": "Server should not be present on this network",
+        "flag": "endusernetwork"
+      }
+    ]
+  },
+  {
+    "suffix": ".dnsbl.spfbl.net",
+    "data": [
+      {
+        "ipAddress": "127.0.0.2",
+        "source": "dnsbl.spfbl.net",
+        "description": "listed due to bad reputation and confirmed by anonymous complaints",
+        "flag": "spamsource"
+      },
+      {
+        "ipAddress": "127.0.0.3",
+        "source": "dnsbl.spfbl.net",
+        "description": "listed for suspected SPAM source, due to the difficulty of identifying the person responsible, without rDNS, because it is dynamic IP, with MTA not in compliance with RFC 5321 or SLAAC flag without valid and opened email service.",
+        "flag": "spamsource"
+      }
+    ]
+  },
+  {
+    "suffix": ".zen.spamhaus.org",
+    "data": [
+      {
+        "ipAddress": "127.0.0.2",
+        "source": "zen.spamhaus.org",
+        "description": "Direct UBE sources, spam operations & spam services",
+        "flag": "spamsource"
+      },
+      {
+        "ipAddress": "127.0.0.3",
+        "source": "zen.spamhaus.org",
+        "description": "Direct snowshoe spam sources detected via automationa",
+        "flag": "spamsource"
+      },
+      {
+        "ipAddress": "127.0.0.4",
+        "source": "zen.spamhaus.org",
+        "description": "CBL (3rd party exploits such as proxies, trojans, etc.)",
+        "flag": "malware"
+      },
+      {
+        "ipAddress": "127.0.0.5",
+        "source": "zen.spamhaus.org",
+        "description": "CBL (3rd party exploits such as proxies, trojans, etc.)",
+        "flag": "malware"
+      },
+      {
+        "ipAddress": "127.0.0.6",
+        "source": "zen.spamhaus.org",
+        "description": "CBL (3rd party exploits such as proxies, trojans, etc.)",
+        "flag": "malware"
+      },
+      {
+        "ipAddress": "127.0.0.7",
+        "source": "zen.spamhaus.org",
+        "description": "CBL (3rd party exploits such as proxies, trojans, etc.)",
+        "flag": "malware"
+      },
+      {
+        "ipAddress": "127.0.0.9",
+        "source": "zen.spamhaus.org",
+        "description": "Spamhaus DROP/EDROP Data",
+        "flag": "hijackednetwork"
+      },
+      {
+        "ipAddress": "127.0.0.10",
+        "source": "zen.spamhaus.org",
+        "description": "Non-MTA IP addresses ISP Maintained",
+        "flag": "enduser"
+      },
+      {
+        "ipAddress": "127.0.0.11",
+        "source": "zen.spamhaus.org",
+        "description": "Non-MTA IP addresses Spamhaus Maintained",
+        "flag": "enduser"
+      }
+    ]
+  },
+  {
+    "suffix": ".ips.backscatterer.org",
+    "data": [
+      {
+        "ipAddress": "127.0.0.1",
+        "source": "ips.backscatterer.org",
+        "description": "Server sends auto replies or bounces",
+        "flag": "bouncereflector"
+      }
+    ]
+  },
+  {
+    "suffix": ".v4.fullbogons.cymru.com",
+    "data": [
+      {
+        "ipAddress": "127.0.0.2",
+        "source": "bogons.cymru.com",
+        "description": "Private or unallocated IP addresses",
+        "flag": "hijackednetwork"
+      }
+    ]
+  },
+  {
+    "suffix": ".wormrbl.imp.ch",
+    "data": [
+      {
+        "ipAddress": "127.0.0.5",
+        "source": "wormrbl.imp.ch",
+        "description": "Sending malware in last 3 days",
+        "flag": "malware"
+      }
+    ]
+  },
+  {
+    "suffix": ".spamrbl.imp.ch",
+    "data": [
+      {
+        "ipAddress": "127.0.0.5",
+        "source": "wormrbl.imp.ch",
+        "description": "Sending spam in last 3 days",
+        "flag": "spamsource"
+      }
+    ]
+  }
+]

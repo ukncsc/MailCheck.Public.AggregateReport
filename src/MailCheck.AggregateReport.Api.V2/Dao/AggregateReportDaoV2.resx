@@ -1,0 +1,670 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SelectAllProviderCount" xml:space="preserve">
+    <value>
+SELECT 
+SUM({TotalEmailsSumFiltered}) as `total_emails`
+FROM `domain_date_provider`
+WHERE domain = @domain
+AND date BETWEEN @startDate AND @endDate
+AND provider = 'All Providers'
+{CategoryFilter}
+    </value>
+  </data>
+  <data name="SelectAllProviderRollupCount" xml:space="preserve">
+    <value>
+SELECT 
+SUM({TotalEmailsSumFiltered}) as `total_emails`
+FROM `domain_date_provider_rollup`
+WHERE domain = @domain
+AND date BETWEEN @startDate AND @endDate
+AND provider = 'All Providers'
+{CategoryFilter}
+    </value>
+  </data>
+  <data name="SelectDomainStats" xml:space="preserve">
+    <value>
+SELECT `domain`,
+`date`,
+`spf_pass_dkim_pass_none`,
+`spf_pass_dkim_fail_none`,
+`spf_fail_dkim_pass_none`,
+`spf_fail_dkim_fail_none`,
+`spf_pass_dkim_pass_quarantine`,
+`spf_pass_dkim_fail_quarantine`,
+`spf_fail_dkim_pass_quarantine`,
+`spf_fail_dkim_fail_quarantine`,
+`spf_pass_dkim_pass_reject`,
+`spf_pass_dkim_fail_reject`,
+`spf_fail_dkim_pass_reject`,
+`spf_fail_dkim_fail_reject`
+FROM `domain_date`
+WHERE domain = @domain
+AND date BETWEEN @startDate AND @endDate
+{CategoryFilter}
+    </value>
+  </data>
+  <data name="SelectDominStatsRollup" xml:space="preserve">
+    <value>
+SELECT `domain`,
+`date`,
+`spf_pass_dkim_pass_none`,
+`spf_pass_dkim_fail_none`,
+`spf_fail_dkim_pass_none`,
+`spf_fail_dkim_fail_none`,
+`spf_pass_dkim_pass_quarantine`,
+`spf_pass_dkim_fail_quarantine`,
+`spf_fail_dkim_pass_quarantine`,
+`spf_fail_dkim_fail_quarantine`,
+`spf_pass_dkim_pass_reject`,
+`spf_pass_dkim_fail_reject`,
+`spf_fail_dkim_pass_reject`,
+`spf_fail_dkim_fail_reject`
+FROM `domain_date_rollup`
+WHERE domain = @domain
+AND date BETWEEN @startDate AND @endDate
+{CategoryFilter}
+    </value>
+  </data>
+  <data name="SelectProviderStats" xml:space="preserve">
+    <value>
+SELECT `domain`,
+`provider`,
+SUM(`spf_pass_dkim_pass_none`) as `spf_pass_dkim_pass_none`,
+SUM(`spf_pass_dkim_fail_none`) as `spf_pass_dkim_fail_none`,
+SUM(`spf_fail_dkim_pass_none`) as `spf_fail_dkim_pass_none`,
+SUM(`spf_fail_dkim_fail_none`) as `spf_fail_dkim_fail_none`,
+SUM(`spf_pass_dkim_pass_quarantine`) as `spf_pass_dkim_pass_quarantine`,
+SUM(`spf_pass_dkim_fail_quarantine`) as `spf_pass_dkim_fail_quarantine`,
+SUM(`spf_fail_dkim_pass_quarantine`) as `spf_fail_dkim_pass_quarantine`,
+SUM(`spf_fail_dkim_fail_quarantine`) as `spf_fail_dkim_fail_quarantine`, 
+SUM(`spf_pass_dkim_pass_reject`) as `spf_pass_dkim_pass_reject`,
+SUM(`spf_pass_dkim_fail_reject`) as `spf_pass_dkim_fail_reject`,
+SUM(`spf_fail_dkim_pass_reject`) as `spf_fail_dkim_pass_reject`, 
+SUM(`spf_fail_dkim_fail_reject`) as `spf_fail_dkim_fail_reject`,
+SUM({FullyTrustedSum}) as `fully_trusted`,
+SUM({PartiallyTrustedSum}) as `partially_trusted`,
+SUM({UntrustedSum}) as `untrusted`,
+SUM({QuarantinedSum}) as `quarantined`,
+SUM({RejectedSum}) as `rejected`,
+SUM({FailSpfSumFiltered}) as `fail_spf_total`,
+SUM({FailDkimSumFiltered}) as `fail_dkim_total`,
+SUM({TotalEmailsSumFiltered}) as `total_emails`
+FROM `domain_date_provider`
+WHERE domain = @domain
+AND date BETWEEN @startDate AND @endDate
+{CategoryFilter}
+{ProviderFilter}
+GROUP BY `provider`
+ORDER BY `total_emails` DESC
+LIMIT @offset, @pageSize;
+    </value>
+  </data>
+  <data name="SelectProviderStatsCount" xml:space="preserve">
+    <value>
+SELECT COUNT(*) 
+FROM (
+SELECT provider
+FROM `domain_date_provider`
+WHERE domain = @domain
+AND date BETWEEN @startDate AND @endDate
+{CategoryFilter}
+GROUP BY provider) as tb
+    </value>
+  </data>
+  <data name="SelectProviderStatsRollup" xml:space="preserve">
+    <value>
+SELECT `domain`,
+`provider`,
+SUM(`spf_pass_dkim_pass_none`) as `spf_pass_dkim_pass_none`,
+SUM(`spf_pass_dkim_fail_none`) as `spf_pass_dkim_fail_none`,
+SUM(`spf_fail_dkim_pass_none`) as `spf_fail_dkim_pass_none`,
+SUM(`spf_fail_dkim_fail_none`) as `spf_fail_dkim_fail_none`,
+SUM(`spf_pass_dkim_pass_quarantine`) as `spf_pass_dkim_pass_quarantine`,
+SUM(`spf_pass_dkim_fail_quarantine`) as `spf_pass_dkim_fail_quarantine`,
+SUM(`spf_fail_dkim_pass_quarantine`) as `spf_fail_dkim_pass_quarantine`,
+SUM(`spf_fail_dkim_fail_quarantine`) as `spf_fail_dkim_fail_quarantine`,
+SUM(`spf_pass_dkim_pass_reject`) as `spf_pass_dkim_pass_reject`,
+SUM(`spf_pass_dkim_fail_reject`) as `spf_pass_dkim_fail_reject`,
+SUM(`spf_fail_dkim_pass_reject`) as `spf_fail_dkim_pass_reject`,
+SUM(`spf_fail_dkim_fail_reject`) as `spf_fail_dkim_fail_reject`,
+SUM({FullyTrustedSum}) as `fully_trusted`,
+SUM({PartiallyTrustedSum}) as `partially_trusted`,
+SUM({UntrustedSum}) as `untrusted`,
+SUM({QuarantinedSum}) as `quarantined`,
+SUM({RejectedSum}) as `rejected`,
+SUM({FailSpfSumFiltered}) as `fail_spf_total`,
+SUM({FailDkimSumFiltered}) as `fail_dkim_total`,
+SUM({TotalEmailsSumFiltered}) as `total_emails`
+FROM `domain_date_provider_rollup`
+WHERE domain = @domain
+AND date BETWEEN @startDate AND @endDate
+{CategoryFilter}
+{ProviderFilter}
+GROUP BY `provider`
+ORDER BY `total_emails` DESC
+LIMIT @offset, @pageSize;
+    </value>
+  </data>
+  <data name="SelectProviderStatsRollupCount" xml:space="preserve">
+    <value>
+SELECT COUNT(*) 
+FROM (
+SELECT provider
+FROM `domain_date_provider_rollup`
+WHERE domain = @domain
+AND date BETWEEN @startDate AND @endDate
+{CategoryFilter}
+GROUP BY provider) as tb
+    </value>
+  </data>
+  <data name="SelectSingleProviderStats" xml:space="preserve">
+    <value>
+SELECT `domain`,
+`provider`,
+`domain` as `subdomain`,
+SUM(`spf_pass_dkim_pass_none`) as `spf_pass_dkim_pass_none`,
+SUM(`spf_pass_dkim_fail_none`) as `spf_pass_dkim_fail_none`,
+SUM(`spf_fail_dkim_pass_none`) as `spf_fail_dkim_pass_none`,
+SUM(`spf_fail_dkim_fail_none`) as `spf_fail_dkim_fail_none`,
+SUM(`spf_pass_dkim_pass_quarantine`) as `spf_pass_dkim_pass_quarantine`,
+SUM(`spf_pass_dkim_fail_quarantine`) as `spf_pass_dkim_fail_quarantine`,
+SUM(`spf_fail_dkim_pass_quarantine`) as `spf_fail_dkim_pass_quarantine`,
+SUM(`spf_fail_dkim_fail_quarantine`) as `spf_fail_dkim_fail_quarantine`, 
+SUM(`spf_pass_dkim_pass_reject`) as `spf_pass_dkim_pass_reject`,
+SUM(`spf_pass_dkim_fail_reject`) as `spf_pass_dkim_fail_reject`,
+SUM(`spf_fail_dkim_pass_reject`) as `spf_fail_dkim_pass_reject`, 
+SUM(`spf_fail_dkim_fail_reject`) as `spf_fail_dkim_fail_reject`,
+SUM({FullyTrustedSum}) as `fully_trusted`,
+SUM({PartiallyTrustedSum}) as `partially_trusted`,
+SUM({UntrustedSum}) as `untrusted`,
+SUM({QuarantinedSum}) as `quarantined`,
+SUM({RejectedSum}) as `rejected`,
+SUM({FailSpfSumFiltered}) as `fail_spf_total`,
+SUM({FailDkimSumFiltered}) as `fail_dkim_total`,
+SUM({TotalEmailsSumFiltered}) as `total_emails`
+FROM `domain_date_provider`
+WHERE domain = @domain
+AND provider = @provider
+AND date BETWEEN @startDate AND @endDate
+{CategoryFilter}
+    </value>
+  </data>
+  <data name="SelectSubdomainCount" xml:space="preserve">
+    <value>
+SELECT COUNT(*) 
+FROM (
+SELECT subdomain
+FROM `domain_date_provider_subdomain`
+WHERE domain = @domain
+AND provider = @provider
+AND date BETWEEN @startDate AND @endDate
+{CategoryFilter}
+GROUP BY subdomain) as tb
+    </value>
+  </data>
+  <data name="SelectSubdomainStats" xml:space="preserve">
+    <value>
+SELECT `domain`,
+`provider`,
+`subdomain`,
+SUM(`spf_pass_dkim_pass_none`) as `spf_pass_dkim_pass_none`,
+SUM(`spf_pass_dkim_fail_none`) as `spf_pass_dkim_fail_none`,
+SUM(`spf_fail_dkim_pass_none`) as `spf_fail_dkim_pass_none`,
+SUM(`spf_fail_dkim_fail_none`) as `spf_fail_dkim_fail_none`,
+SUM(`spf_pass_dkim_pass_quarantine`) as `spf_pass_dkim_pass_quarantine`,
+SUM(`spf_pass_dkim_fail_quarantine`) as `spf_pass_dkim_fail_quarantine`,
+SUM(`spf_fail_dkim_pass_quarantine`) as `spf_fail_dkim_pass_quarantine`,
+SUM(`spf_fail_dkim_fail_quarantine`) as `spf_fail_dkim_fail_quarantine`, 
+SUM(`spf_pass_dkim_pass_reject`) as `spf_pass_dkim_pass_reject`,
+SUM(`spf_pass_dkim_fail_reject`) as `spf_pass_dkim_fail_reject`,
+SUM(`spf_fail_dkim_pass_reject`) as `spf_fail_dkim_pass_reject`, 
+SUM(`spf_fail_dkim_fail_reject`) as `spf_fail_dkim_fail_reject`,
+SUM({FailSpfSumFiltered}) as `fail_spf_total`,
+SUM({FailDkimSumFiltered}) as `fail_dkim_total`,
+SUM({TotalEmailsSumFiltered}) as `total_emails`
+FROM `domain_date_provider_subdomain`
+WHERE domain = @domain
+AND provider = @provider
+AND date BETWEEN @startDate AND @endDate
+{CategoryFilter}
+GROUP BY subdomain
+ORDER BY `total_emails` DESC
+LIMIT @offset, @pageSize;
+    </value>
+  </data>
+  <data name="SelectIpStats" xml:space="preserve">
+    <value>
+SELECT `domain`,
+`provider`,
+`ip`,
+(SELECT `hostname` FROM `domain_date_provider_ip`
+  WHERE domain = @domain
+  AND provider = @provider
+  AND ip = a.ip
+  AND date BETWEEN @startDate AND @endDate
+  GROUP BY hostname ORDER BY count(*) DESC LIMIT 1) `hostname`,
+SUM(`spf_pass_dkim_pass_none`) as `spf_pass_dkim_pass_none`,
+SUM(`spf_pass_dkim_fail_none`) as `spf_pass_dkim_fail_none`,
+SUM(`spf_fail_dkim_pass_none`) as `spf_fail_dkim_pass_none`,
+SUM(`spf_fail_dkim_fail_none`) as `spf_fail_dkim_fail_none`,
+SUM(`spf_pass_dkim_pass_quarantine`) as `spf_pass_dkim_pass_quarantine`,
+SUM(`spf_pass_dkim_fail_quarantine`) as `spf_pass_dkim_fail_quarantine`,
+SUM(`spf_fail_dkim_pass_quarantine`) as `spf_fail_dkim_pass_quarantine`,
+SUM(`spf_fail_dkim_fail_quarantine`) as `spf_fail_dkim_fail_quarantine`, 
+SUM(`spf_pass_dkim_pass_reject`) as `spf_pass_dkim_pass_reject`,
+SUM(`spf_pass_dkim_fail_reject`) as `spf_pass_dkim_fail_reject`,
+SUM(`spf_fail_dkim_pass_reject`) as `spf_fail_dkim_pass_reject`, 
+SUM(`spf_fail_dkim_fail_reject`) as `spf_fail_dkim_fail_reject`,
+SUM({FullyTrustedSum}) as `fully_trusted`,
+SUM({PartiallyTrustedSum}) as `partially_trusted`,
+SUM({UntrustedSum}) as `untrusted`,
+SUM({QuarantinedSum}) as `quarantined`,
+SUM({RejectedSum}) as `rejected`,
+SUM({DeliveredSum}) as `delivered`,
+SUM({PassSpfSum}) as `pass_spf_total`,
+SUM({PassDkimSum}) as `pass_dkim_total`,
+SUM({FailSpfSum}) as `fail_spf_total`,
+SUM({FailDkimSum}) as `fail_dkim_total`,
+SUM({TotalEmailsSum}) as `total_emails`,
+SUM(`spf_misaligned`) as `spf_misaligned`,
+SUM(`dkim_misaligned`) as `dkim_misaligned`,
+MAX(`blocklists_proxy`) as `blocklists_proxy`,
+MAX(`blocklists_hijackednetwork`) as `blocklists_hijackednetwork`,
+MAX(`blocklists_suspiciousnetwork`) as `blocklists_suspiciousnetwork`,
+MAX(`blocklists_endusernetwork`) as `blocklists_endusernetwork`,
+MAX(`blocklists_spamsource`) as `blocklists_spamsource`,
+MAX(`blocklists_malware`) as `blocklists_malware`,
+MAX(`blocklists_enduser`) as `blocklists_enduser`,
+MAX(`blocklists_bouncereflector`) as `blocklists_bouncereflector`,
+SUM(`por_forwarded`) as `por_forwarded`,
+SUM(`por_sampledout`) as `por_sampledout`,
+SUM(`por_trustedforwarder`) as `por_trustedforwarder`,
+SUM(`por_mailinglist`) as `por_mailinglist`,
+SUM(`por_localpolicy`) as `por_localpolicy`,
+SUM(`por_arc`) as `por_arc`,
+SUM(`por_other`) as `por_other`
+FROM `domain_date_provider_ip` as a
+WHERE domain = @domain
+AND provider = @provider
+{CategoryFilter}
+AND (@ip IS NULL OR ip = @ip)
+AND date BETWEEN @startDate AND @endDate
+GROUP BY ip
+ORDER BY `total_emails` DESC
+LIMIT @offset, @pageSize;
+    </value>
+  </data>
+  <data name="SelectSpfDomainStats" xml:space="preserve">
+    <value>
+SELECT `domain`,
+`provider`,
+`ip`,
+`spf_domain`,
+SUM(`spf_pass`) as `spf_pass`,
+SUM(`spf_fail`) as `spf_fail`
+FROM `domain_date_provider_ip_spf`
+WHERE domain = @domain
+AND provider = @provider
+AND ip = @ip
+AND date BETWEEN @startDate AND @endDate
+GROUP BY `spf_domain`;
+    </value>
+  </data>
+  <data name="SelectIpStatsCount" xml:space="preserve">
+    <value>
+SELECT 
+  COUNT(ip) as `hostname_count`,
+  SUM(total_emails) as `total_emails`
+FROM (
+	SELECT 
+    ip,
+    SUM({TotalEmailsSum}) as `total_emails`
+	FROM `domain_date_provider_ip` as a
+	WHERE domain = @domain
+	AND provider = @provider
+	{CategoryFilter}
+	{IpFilter}
+	AND date BETWEEN @startDate AND @endDate 
+  GROUP BY ip
+) as innerQuery
+    </value>
+  </data>
+  <data name="SelectDkimDomainStats" xml:space="preserve">
+    <value>
+SELECT `domain`,
+`provider`,
+`ip`,
+`dkim_domain`,
+`dkim_selector`,
+SUM(`dkim_pass`) as `dkim_pass`,
+SUM(`dkim_fail`) as `dkim_fail`
+FROM `domain_date_provider_ip_dkim`
+WHERE domain = @domain
+AND provider = @provider
+AND ip = @ip
+AND date BETWEEN @startDate AND @endDate
+GROUP BY `dkim_domain`, `dkim_selector`;
+    </value>
+  </data>
+  <data name="FilterByFullyTrusted" xml:space="preserve">
+    <value> AND spf_pass_dkim_pass_none &gt; 0</value>
+  </data>
+  <data name="FilterByPartiallyTrusted" xml:space="preserve">
+    <value> AND (spf_fail_dkim_pass_none &gt; 0 OR spf_pass_dkim_fail_none &gt; 0)</value>
+  </data>
+  <data name="FilterByQuarantined" xml:space="preserve">
+    <value> AND (spf_pass_dkim_pass_quarantine &gt; 0 OR spf_pass_dkim_fail_quarantine &gt; 0 OR spf_fail_dkim_pass_quarantine &gt; 0 OR spf_fail_dkim_fail_quarantine &gt; 0)</value>
+  </data>
+  <data name="FilterByRejected" xml:space="preserve">
+    <value> AND (spf_pass_dkim_pass_reject &gt; 0 OR spf_pass_dkim_fail_reject &gt; 0 OR spf_fail_dkim_pass_reject &gt; 0 OR spf_fail_dkim_fail_reject &gt; 0)</value>
+  </data>
+  <data name="FilterByUntrused" xml:space="preserve">
+    <value> AND spf_fail_dkim_fail_none &gt; 0</value>
+  </data>
+  <data name="FilterByProvider" xml:space="preserve">
+    <value> AND provider like @providerFilter</value>
+  </data>
+  <data name="SelectIpStatsSummary" xml:space="preserve">
+    <value>
+SELECT 
+	SUM({FullyTrustedSum}) as TotalFullyTrusted,
+	SUM({PartiallyTrustedSum}) as TotalPartiallyTrusted,
+	SUM({UntrustedSum}) as TotalUntrusted,
+	SUM({QuarantinedSum}) as TotalQuarantined,
+	SUM({RejectedSum}) as TotalRejected,
+	SUM({TotalEmailsSum}) as TotalEmails
+FROM `domain_date_provider_ip` as a
+WHERE domain = @domain
+AND provider = @provider
+AND date BETWEEN @startDate AND @endDate
+AND (@hostFilter is NULL OR hostname like @hostFilter)
+{CategoryFilter}
+    </value>
+  </data>
+  <data name="SelectDomainRollupStatsSummary" xml:space="preserve">
+    <value>
+SELECT 
+	SUM({FullyTrustedSum}) as TotalFullyTrusted,
+	SUM({PartiallyTrustedSum}) as TotalPartiallyTrusted,
+	SUM({UntrustedSum}) as TotalUntrusted,
+	SUM({QuarantinedSum}) as TotalQuarantined,
+	SUM({RejectedSum}) as TotalRejected,
+	SUM({TotalEmailsSumFiltered}) as TotalEmails
+FROM `domain_date_rollup` as a
+WHERE domain = @domain
+AND date BETWEEN @startDate AND @endDate
+{CategoryFilter}
+    </value>
+  </data>
+  <data name="SelectDomainStatsSummary" xml:space="preserve">
+    <value>
+SELECT 
+	SUM({FullyTrustedSum}) as TotalFullyTrusted,
+	SUM({PartiallyTrustedSum}) as TotalPartiallyTrusted,
+	SUM({UntrustedSum}) as TotalUntrusted,
+	SUM({QuarantinedSum}) as TotalQuarantined,
+	SUM({RejectedSum}) as TotalRejected,
+	SUM({TotalEmailsSumFiltered}) as TotalEmails
+FROM `domain_date` as a
+WHERE domain = @domain
+AND date BETWEEN @startDate AND @endDate
+{CategoryFilter}
+    </value>
+  </data>
+  <data name="SelectProviderRollupStatsSummary" xml:space="preserve">
+    <value>
+SELECT 
+	SUM({FullyTrustedSum}) as TotalFullyTrusted,
+	SUM({PartiallyTrustedSum}) as TotalPartiallyTrusted,
+	SUM({UntrustedSum}) as TotalUntrusted,
+	SUM({QuarantinedSum}) as TotalQuarantined,
+	SUM({RejectedSum}) as TotalRejected,
+	SUM({TotalEmailsSumFiltered}) as TotalEmails
+FROM `domain_date_provider_rollup` as a
+WHERE domain = @domain
+AND date BETWEEN @startDate AND @endDate
+{CategoryFilter}
+{ProviderFilter}
+    </value>
+  </data>
+  <data name="SelectProviderStatsSummary" xml:space="preserve">
+    <value>
+SELECT 
+	SUM({FullyTrustedSum}) as TotalFullyTrusted,
+	SUM({PartiallyTrustedSum}) as TotalPartiallyTrusted,
+	SUM({UntrustedSum}) as TotalUntrusted,
+	SUM({QuarantinedSum}) as TotalQuarantined,
+	SUM({RejectedSum}) as TotalRejected,
+	SUM({TotalEmailsSumFiltered}) as TotalEmails
+FROM `domain_date_provider` as a
+WHERE domain = @domain
+AND date BETWEEN @startDate AND @endDate
+{CategoryFilter}
+{ProviderFilter}
+    </value>
+  </data>
+  <data name="SelectAggregateExportData" xml:space="preserve">
+    <value>SELECT
+effective_date,
+domain,
+provider,
+original_provider,
+reporter_org_name,
+ip,
+count,
+disposition,
+dkim,
+spf,
+envelope_to,
+envelope_from,
+header_from,
+organisation_domain_from,
+spf_auth_results,
+spf_pass_count,
+spf_fail_count,
+dkim_auth_results,
+dkim_pass_count,
+dkim_fail_count,
+forwarded,
+sampled_out,
+trusted_forwarder,
+mailing_list,
+local_policy,
+arc,
+other_override_reason,
+host_name,
+host_org_domain,
+host_provider,
+host_as_number,
+host_as_description,
+host_country,
+proxy_blocklist,
+suspicious_network_blocklist,
+hijacked_network_blocklist,
+enduser_network_blocklist,
+spam_source_blocklist,
+malware_blocklist,
+enduser_blocklist,
+bounce_reflector_blocklist
+FROM
+`eslr`
+WHERE reverse_domain = @reverseDomain
+AND effective_date BETWEEN @startDate AND @endDate
+AND (@provider IS NULL OR provider = @provider)
+AND (@ip IS NULL OR ip = @ip);
+    </value>
+  </data>
+  <data name="SelectAggregateExportDataWithSubdomains" xml:space="preserve">
+    <value>
+SELECT
+effective_date,
+domain,
+provider,
+original_provider,
+reporter_org_name,
+ip,
+count,
+disposition,
+dkim,
+spf,
+envelope_to,
+envelope_from,
+header_from,
+organisation_domain_from,
+spf_auth_results,
+spf_pass_count,
+spf_fail_count,
+dkim_auth_results,
+dkim_pass_count,
+dkim_fail_count,
+forwarded,
+sampled_out,
+trusted_forwarder,
+mailing_list,
+local_policy,
+arc,
+other_override_reason,
+host_name,
+host_org_domain,
+host_provider,
+host_as_number,
+host_as_description,
+host_country,
+proxy_blocklist,
+suspicious_network_blocklist,
+hijacked_network_blocklist,
+enduser_network_blocklist,
+spam_source_blocklist,
+malware_blocklist,
+enduser_blocklist,
+bounce_reflector_blocklist
+FROM
+`eslr`
+WHERE reverse_domain LIKE @reverseDomain
+AND effective_date BETWEEN @startDate AND @endDate
+AND (@provider IS NULL OR provider = @provider)
+AND (@ip IS NULL OR ip = @ip);
+    </value>
+  </data>
+  <data name="FilterByIp" xml:space="preserve">
+    <value>AND (@ip IS NULL OR ip = @ip)</value>
+  </data>
+</root>
