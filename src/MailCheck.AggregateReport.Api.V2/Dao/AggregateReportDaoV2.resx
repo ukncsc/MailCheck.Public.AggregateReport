@@ -658,7 +658,7 @@ enduser_blocklist,
 bounce_reflector_blocklist
 FROM
 `eslr`
-WHERE reverse_domain LIKE @reverseDomain
+WHERE (reverse_domain = @reverseDomain OR reverse_domain LIKE CONCAT(@reverseDomain, '.%'))
 AND effective_date BETWEEN @startDate AND @endDate
 AND (@provider IS NULL OR provider = @provider)
 AND (@ip IS NULL OR ip = @ip);

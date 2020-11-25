@@ -494,7 +494,7 @@ namespace MailCheck.AggregateReport.Api.V2.Dao
         public async Task<List<AggregateReportExportStats>> GetAggregateReportExport(string domain, string provider, string ip, DateTime startDate,
             DateTime endDate, bool includeSubdomains)
         {
-            string reverseDomain = $"{DomainNameUtils.ReverseDomainName(domain)}{(includeSubdomains ? "%" : "")}";
+            string reverseDomain = DomainNameUtils.ReverseDomainName(domain);
             
             string connectionString = await _connectionInfoAsync.GetConnectionStringAsync();
 

@@ -19,6 +19,38 @@
     {
       "provider": "",
       "mapping": "Provider lookup failed"
+    },
+    {
+      "provider": "lsoft.se",
+      "mapping": "LISTSERV Mailing List (from L-Soft)"
+    },
+    {
+      "provider": "createsend.com",
+      "mapping": "Campaign Monitor/CreateSend"
+    },
+    {
+      "provider": "pd25.com",
+      "mapping": "Pardot"
+    },
+    {
+      "provider": "ondemand.com",
+      "mapping": "SAP Cloud"
+    },
+    {
+      "provider": "nw007.com",
+      "mapping": "Poppulo (formerly Newsweaver)"
+    },
+    {
+      "provider": "mtasv.net",
+      "mapping": "Postmark"
+    },
+    {
+      "provider": "qemailserver.com",
+      "mapping": "Qualtrics"
+    },
+    {
+      "provider": "bmsend.com",
+      "mapping": "Benchmark Email"
     }
   ],
 
@@ -50,19 +82,29 @@ This grouping in Mail Check helps because it removes the noise from your analysi
 NCSC have no control over these data sources. Like any automatically generated list there are likely to be false positives and false negatives. Not all spoofed email will appear in this category in Mail Check; only those that have been identified in these lists. You may also find your legitimate mail ends up being reported as spam - your service provider should be able to advise you on getting off these lists and how to avoid them in future.
 
 We currently check the following lists:
-* sorbs.net (http://www.sorbs.net/)
-* spamhaus.org (https://www.spamhaus.org/sbl/)
-* backscatterer.org (http://www.backscatterer.org/)
-* spfbl.net (https://spfbl.net/en/dnsbl/)
-* fullbogons.cymru.com (https://team-cymru.com/community-services/bogon-reference/)
-* wormrbl.imp.ch (https://antispam.imp.ch/)
-* spamrbl.imp.ch (https://antispam.imp.ch/)"
+* [sorbs.net](http://www.sorbs.net/)
+* [spamhaus.org](https://www.spamhaus.org/sbl/)
+* [backscatterer.org](http://www.backscatterer.org/)
+* [spfbl.net](https://spfbl.net/en/dnsbl/)
+* [fullbogons.cymru.com](https://team-cymru.com/community-services/bogon-reference/)
+* [wormrbl.imp.ch](https://antispam.imp.ch/)
+* [spamrbl.imp.ch](https://antispam.imp.ch/)"
     },
     {
       "provider": "Unrouted",
       "mapping": "Mail Check attempts to find a provider from an IP address by first doing a Reverse DNS lookup and then doing an Autonomous System lookup for the IP. If neither of these return anything we mark the provider as 'Unrouted - prefix not advertised to the internet' as this IP has no Autonomous System information.
 
 You should still be able to perform a 'whois' lookup on this IP address if you would like more information. We are also working on including this into Mail Check."
+    },
+    {
+      "provider": "lsoft.se",
+      "mapping": "This is a mailing list service using the LISTSERV platform. If you are a UK University, College or other academic institution this is likely to be the service [JiscMail](https://www.jiscmail.ac.uk).
+      
+You do not need to configure SPF or DKIM for this email provider. Like many mailing lists, this platform has a ‘handler’ that will automatically detect when you move to a DMARC policy of quarantine or reject, and will ensure emails related to the JiscMail platform are still delivered.
+      
+When you are ready to move to a DMARC policy of quarantine, then start by applying a percentage value of pct=0. This is the same as a DMARC policy of p=none, but you will also be able to assure yourself that ListServ has stopped spoofing your domain.
+      
+The NCSC has [further information on applying pct values in the DMARC record](https://www.ncsc.gov.uk/collection/email-security-and-anti-spoofing/mark-spoof-emails-as-spam)"
     }
   ]
 }
