@@ -10,6 +10,7 @@ namespace MailCheck.AggregateReport.DomainDateProvider
             string domain,
             DateTime date,
             string provider,
+            string originalProvider,
             long spfPassDkimPassNone,
             long spfPassDkimFailNone,
             long spfFailDkimPassNone,
@@ -27,6 +28,7 @@ namespace MailCheck.AggregateReport.DomainDateProvider
             Domain = domain;
             Date = date;
             Provider = provider;
+            OriginalProvider = originalProvider;
             SpfPassDkimPassNone = spfPassDkimPassNone;
             SpfPassDkimFailNone = spfPassDkimFailNone;
             SpfFailDkimPassNone = spfFailDkimPassNone;
@@ -42,6 +44,7 @@ namespace MailCheck.AggregateReport.DomainDateProvider
         }
         public DateTime Date { get; }
         public string Provider { get; }
+        public string OriginalProvider { get; }
         public long Id { get; }
         public string Domain { get; }
         public long SpfPassDkimPassNone { get; }

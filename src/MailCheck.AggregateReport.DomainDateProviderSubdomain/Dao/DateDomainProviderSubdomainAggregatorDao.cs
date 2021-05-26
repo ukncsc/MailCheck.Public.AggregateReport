@@ -19,6 +19,7 @@ namespace MailCheck.AggregateReport.DomainDateProviderSubdomain.Dao
                     "domain",
                     "date",
                     "provider",
+                    "original_provider",
                     "subdomain",
                     "spf_pass_dkim_pass_none",
                     "spf_pass_dkim_fail_none",
@@ -54,6 +55,7 @@ namespace MailCheck.AggregateReport.DomainDateProviderSubdomain.Dao
             yield return KeyValuePair.Create<string, object>("domain", record.Domain);
             yield return KeyValuePair.Create<string, object>("date", record.Date.ToString("yyyy-MM-dd"));
             yield return KeyValuePair.Create<string, object>("provider", record.Provider);
+            yield return KeyValuePair.Create<string, object>("original_provider", record.OriginalProvider);
             yield return KeyValuePair.Create<string, object>("subdomain", record.Subdomain);
             yield return KeyValuePair.Create<string, object>("spf_pass_dkim_pass_none", record.SpfPassDkimPassNone);
             yield return KeyValuePair.Create<string, object>("spf_pass_dkim_fail_none", record.SpfPassDkimFailNone);

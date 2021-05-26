@@ -22,7 +22,7 @@ namespace MailCheck.AggregateReport.Api.V2
 
             if (RunInDevMode())
             {
-                webHostBuilder.UseUrls("http://localhost:5006");
+                webHostBuilder.UseUrls("http://+:5006");
             }
 
             return webHostBuilder;

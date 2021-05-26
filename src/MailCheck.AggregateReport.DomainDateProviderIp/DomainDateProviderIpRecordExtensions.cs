@@ -3,10 +3,10 @@
     public static class DomainDateProviderIpRecordExtensions
     {
         public static DomainDateProviderIpRecord CloneWithDifferentProvider(this DomainDateProviderIpRecord record,
-            string provider)
+            string provider, string originalProvider)
         {
             return new DomainDateProviderIpRecord(record.Id, record.Domain, record.Date,
-                provider, record.OriginalProvider, record.Ip, record.Hostname, record.SpfPassDkimPassNone,
+                provider, originalProvider, record.Ip, record.Hostname, record.SpfPassDkimPassNone,
                 record.SpfPassDkimFailNone, record.SpfFailDkimPassNone, record.SpfFailDkimFailNone,
                 record.SpfPassDkimPassQuarantine, record.SpfPassDkimFailQuarantine, record.SpfFailDkimPassQuarantine,
                 record.SpfFailDkimFailQuarantine, record.SpfPassDkimPassReject, record.SpfPassDkimFailReject,

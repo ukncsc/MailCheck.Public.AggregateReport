@@ -71,18 +71,28 @@ namespace MailCheck.Intelligence.Enricher.Blocklist
 
             while (attempt < maxAttempts)
             {
+                Stopwatch stopwatch = Stopwatch.StartNew();
                 await Task.Delay(attempt * attempt * 1000);
                 attempt++;
-
+                
                 try
                 {
                     result = await _lookupClient.QueryAsync(query, QueryType.A);
-
-                    if (!result.HasError) break;
+                    
+                    if (!result.HasError)
+                    {
+                        _log.LogInformation(
+                            $"Blocklist lookup attempt {attempt} of query {query} for source {_source.Suffix} resulted in success and took {stopwatch.ElapsedMilliseconds} ms.");
+                        break;
+                    }
+                    
+                    _log.LogInformation(
+                        $"Blocklist lookup attempt {attempt} of query {query} for source {_source.Suffix} resulted in error and took {stopwatch.ElapsedMilliseconds} ms." +
+                        $"Error: {result.ErrorMessage ?? "Unknown Error"}");
                 }
                 catch (Exception e)
                 {
-                    _log.LogInformation(e, $"Unable to make request to {query}");
+                    _log.LogInformation(e,$"Blocklist lookup attempt {attempt} of query {query} for source {_source.Suffix} resulted in exception and took {stopwatch.ElapsedMilliseconds} ms.");                
                 }
             }
 

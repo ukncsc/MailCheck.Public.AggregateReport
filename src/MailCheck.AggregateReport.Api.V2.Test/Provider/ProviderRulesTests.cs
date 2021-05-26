@@ -1,3 +1,4 @@
+using System;
 using MailCheck.AggregateReport.Api.V2.Provider;
 using NUnit.Framework;
 
@@ -25,8 +26,8 @@ namespace MailCheck.AggregateReport.Api.V2.Test.Provider
         public void GetProviderMarkdownShouldReturnMarkdown()
         {
             string markdown = _providerDetailsProvider.GetProviderMarkdown("testProvider");
-            
-            Assert.That(markdown, Is.EqualTo("testMarkdown"));
+            string expected = $"testMarkdown{Environment.NewLine}***{Environment.NewLine}### Did this help?{Environment.NewLine}Email [mailcheck@digital.ncsc.gov.uk](mailto:mailcheck@digital.ncsc.gov.uk) if you note any errors or have any tips you would like to share.";
+            Assert.That(markdown, Is.EqualTo(expected));
         }
         
         [Test]

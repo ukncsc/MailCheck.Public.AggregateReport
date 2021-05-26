@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Xml.Linq;
 using MailCheck.AggregateReport.Parser.Domain.Dmarc;
+using MailCheck.AggregateReport.Parser.Exceptions;
 using MailCheck.AggregateReport.Parser.Serialisation.AggregateReportDeserialisation;
 using NUnit.Framework;
 
@@ -23,7 +24,7 @@ namespace MailCheck.AggregateReport.Parser.Test.Serialisation.AggregateReportDes
         {
             XElement xElement = XElement.Parse(DkimAuthResultDeserialiserTestsResources.NoDomainTag);
             var exception = Assert.Throws<ArgumentException>(() => _dkimAuthResultDeserialiser.Deserialise(new [] {xElement}));
-            Assert.That(exception.Message, Is.EqualTo("Expected element 'domain' was not found"));
+            Assert.That(exception.Message, Is.EqualTo("Expected element 'domain' was not found in DKIM Auth Results"));
         }
 
         [Test]
@@ -39,7 +40,7 @@ namespace MailCheck.AggregateReport.Parser.Test.Serialisation.AggregateReportDes
         {
             XElement xElement = XElement.Parse(DkimAuthResultDeserialiserTestsResources.NoResultTag);
             var exception = Assert.Throws<ArgumentException>(() => _dkimAuthResultDeserialiser.Deserialise(new[] { xElement }));
-            Assert.That(exception.Message, Is.EqualTo("Expected element 'result' was not found"));
+            Assert.That(exception.Message, Is.EqualTo("Expected element 'result' was not found in DKIM Auth Results"));
         }
 
         [Test]
@@ -115,7 +116,7 @@ namespace MailCheck.AggregateReport.Parser.Test.Serialisation.AggregateReportDes
         {
             XElement xElement = XElement.Parse(DkimAuthResultDeserialiserTestsResources.NotDirectDescendants);
             var exception = Assert.Throws<ArgumentException>(() => _dkimAuthResultDeserialiser.Deserialise(new[] { xElement }));
-            Assert.That(exception.Message, Is.EqualTo("Expected element 'result' was not found"));
+            Assert.That(exception.Message, Is.EqualTo("Expected element 'result' was not found in DKIM Auth Results"));
         }
     }
 }

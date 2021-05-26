@@ -1,4 +1,6 @@
 using Amazon.Lambda.Core;
+using MailCheck.AggregateReport.Common;
+using MailCheck.AggregateReport.Common.Aggregators;
 using MailCheck.AggregateReport.RollupDomainDateProvider;
 using MailCheck.Common.Messaging.Sqs;
 
@@ -10,7 +12,7 @@ namespace MailCheck.RollupDomainDateProvider
 {
     public class LambdaEntryPoint : SqsTriggeredLambdaEntryPoint
     {
-        public LambdaEntryPoint() : base(new StartUp())
+        public LambdaEntryPoint() : base(new StartUp(), StartUpOverride.EventProcessorOverrides)
         {
         }
     }

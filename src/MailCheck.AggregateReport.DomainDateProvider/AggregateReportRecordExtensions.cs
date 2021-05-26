@@ -11,7 +11,7 @@ namespace MailCheck.AggregateReport.DomainDateProvider
         {
             DomainDateProviderRecord record = GetDomainDateProviderRecord(aggregateReportRecord);
 
-            return new List<DomainDateProviderRecord> {record, record.CloneWithDifferentProvider("All Providers")};
+            return new List<DomainDateProviderRecord> {record, record.CloneWithDifferentProvider("All Providers", null)};
         }
 
         private static DomainDateProviderRecord GetDomainDateProviderRecord(
@@ -19,14 +19,8 @@ namespace MailCheck.AggregateReport.DomainDateProvider
         {
             long id = long.Parse(aggregateReportRecord.RecordId);
             string domain = aggregateReportRecord.HeaderFrom.Trim().TrimEnd('.') ?? aggregateReportRecord.DomainFrom;
-            string provider = aggregateReportRecord.HostProvider;
-            if (aggregateReportRecord.Dkim == DmarcResult.fail &&
-                aggregateReportRecord.Spf == DmarcResult.fail &&
-                aggregateReportRecord.ProxyBlockListCount + aggregateReportRecord.SuspiciousNetworkBlockListCount + aggregateReportRecord.HijackedNetworkBlockListCount + aggregateReportRecord.EndUserNetworkBlockListCount + aggregateReportRecord.SpamSourceBlockListCount + aggregateReportRecord.MalwareBlockListCount + aggregateReportRecord.EndUserBlockListCount + aggregateReportRecord.BounceReflectorBlockListCount > 0)
-            {
-                provider = "Blocklisted";
-            }
-
+            string provider = aggregateReportRecord.GetProvider();
+            string originalProvider = aggregateReportRecord.HostProvider;
             DateTime date = aggregateReportRecord.EffectiveDate.Date;
             int count = aggregateReportRecord.Count;
             DmarcResult spfResult = aggregateReportRecord.Spf.GetValueOrDefault(DmarcResult.fail);
@@ -35,60 +29,60 @@ namespace MailCheck.AggregateReport.DomainDateProvider
 
             if (spfResult == DmarcResult.pass && dkimResult == DmarcResult.pass && disposition == Policy.none)
             {
-                return new DomainDateProviderRecord(id, domain, date, provider, count, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+                return new DomainDateProviderRecord(id, domain, date, provider, originalProvider, count, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
             }
 
             if (spfResult == DmarcResult.pass && dkimResult == DmarcResult.fail && disposition == Policy.none)
             {
-                return new DomainDateProviderRecord(id, domain, date, provider, 0, count, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+                return new DomainDateProviderRecord(id, domain, date, provider, originalProvider, 0, count, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
             }
 
             if (spfResult == DmarcResult.fail && dkimResult == DmarcResult.pass && disposition == Policy.none)
             {
-                return new DomainDateProviderRecord(id, domain, date, provider, 0, 0, count, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+                return new DomainDateProviderRecord(id, domain, date, provider, originalProvider, 0, 0, count, 0, 0, 0, 0, 0, 0, 0, 0, 0);
             }
 
             if (spfResult == DmarcResult.fail && dkimResult == DmarcResult.fail && disposition == Policy.none)
             {
-                return new DomainDateProviderRecord(id, domain, date, provider, 0, 0, 0, count, 0, 0, 0, 0, 0, 0, 0, 0);
+                return new DomainDateProviderRecord(id, domain, date, provider, originalProvider, 0, 0, 0, count, 0, 0, 0, 0, 0, 0, 0, 0);
             }
 
             if (spfResult == DmarcResult.pass && dkimResult == DmarcResult.pass && disposition == Policy.quarantine)
             {
-                return new DomainDateProviderRecord(id, domain, date, provider, 0, 0, 0, 0, count, 0, 0, 0, 0, 0, 0, 0);
+                return new DomainDateProviderRecord(id, domain, date, provider, originalProvider, 0, 0, 0, 0, count, 0, 0, 0, 0, 0, 0, 0);
             }
 
             if (spfResult == DmarcResult.pass && dkimResult == DmarcResult.fail && disposition == Policy.quarantine)
             {
-                return new DomainDateProviderRecord(id, domain, date, provider, 0, 0, 0, 0, 0, count, 0, 0, 0, 0, 0, 0);
+                return new DomainDateProviderRecord(id, domain, date, provider, originalProvider, 0, 0, 0, 0, 0, count, 0, 0, 0, 0, 0, 0);
             }
 
             if (spfResult == DmarcResult.fail && dkimResult == DmarcResult.pass && disposition == Policy.quarantine)
             {
-                return new DomainDateProviderRecord(id, domain, date, provider, 0, 0, 0, 0, 0, 0, count, 0, 0, 0, 0, 0);
+                return new DomainDateProviderRecord(id, domain, date, provider, originalProvider, 0, 0, 0, 0, 0, 0, count, 0, 0, 0, 0, 0);
             }
 
             if (spfResult == DmarcResult.fail && dkimResult == DmarcResult.fail && disposition == Policy.quarantine)
             {
-                return new DomainDateProviderRecord(id, domain, date, provider, 0, 0, 0, 0, 0, 0, 0, count, 0, 0, 0, 0);
+                return new DomainDateProviderRecord(id, domain, date, provider, originalProvider, 0, 0, 0, 0, 0, 0, 0, count, 0, 0, 0, 0);
             }
 
             if (spfResult == DmarcResult.pass && dkimResult == DmarcResult.pass && disposition == Policy.reject)
             {
-                return new DomainDateProviderRecord(id, domain, date, provider, 0, 0, 0, 0, 0, 0, 0, 0, count, 0, 0, 0);
+                return new DomainDateProviderRecord(id, domain, date, provider, originalProvider, 0, 0, 0, 0, 0, 0, 0, 0, count, 0, 0, 0);
             }
 
             if (spfResult == DmarcResult.pass && dkimResult == DmarcResult.fail && disposition == Policy.reject)
             {
-                return new DomainDateProviderRecord(id, domain, date, provider, 0, 0, 0, 0, 0, 0, 0, 0, 0, count, 0, 0);
+                return new DomainDateProviderRecord(id, domain, date, provider, originalProvider, 0, 0, 0, 0, 0, 0, 0, 0, 0, count, 0, 0);
             }
 
             if (spfResult == DmarcResult.fail && dkimResult == DmarcResult.pass && disposition == Policy.reject)
             {
-                return new DomainDateProviderRecord(id, domain, date, provider, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, count, 0);
+                return new DomainDateProviderRecord(id, domain, date, provider, originalProvider, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, count, 0);
             }
 
-            return new DomainDateProviderRecord(id, domain, date, provider, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, count);
+            return new DomainDateProviderRecord(id, domain, date, provider, originalProvider, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, count);
         }
     }
 }

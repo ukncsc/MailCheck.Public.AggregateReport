@@ -13,13 +13,8 @@ namespace MailCheck.AggregateReport.DomDatProIpSpf
             long id = long.Parse(aggregateReportRecord.RecordId);
             string domain = aggregateReportRecord.HeaderFrom?.Trim().Trim('.').ToLower() ?? aggregateReportRecord.DomainFrom.ToLower();
             string ip = aggregateReportRecord.HostSourceIp;
-            string provider = aggregateReportRecord.HostProvider;
-            if (aggregateReportRecord.Dkim == DmarcResult.fail &&
-                aggregateReportRecord.Spf == DmarcResult.fail &&
-                aggregateReportRecord.ProxyBlockListCount + aggregateReportRecord.SuspiciousNetworkBlockListCount + aggregateReportRecord.HijackedNetworkBlockListCount + aggregateReportRecord.EndUserNetworkBlockListCount + aggregateReportRecord.SpamSourceBlockListCount + aggregateReportRecord.MalwareBlockListCount + aggregateReportRecord.EndUserBlockListCount + aggregateReportRecord.BounceReflectorBlockListCount > 0)
-            {
-                provider = "Blocklisted";
-            }
+            string provider = aggregateReportRecord.GetProvider();
+            string originalProvider = aggregateReportRecord.HostProvider;
             DateTime date = aggregateReportRecord.EffectiveDate.Date;
             int count = aggregateReportRecord.Count;
             List<string> spfAuthResults = aggregateReportRecord.SpfAuthResults;
@@ -37,23 +32,23 @@ namespace MailCheck.AggregateReport.DomDatProIpSpf
             }
 
             List<DomDatProIpSpfRecord> resultSets = spfDomainResults.Select(x =>
-                    CreateDomDatProIpSpf(id, domain, date, provider,ip, count, x.Item1, x.Item2))
+                    CreateDomDatProIpSpf(id, domain, date, provider, originalProvider, ip, count, x.Item1, x.Item2))
                 .ToList();
 
-            List<DomDatProIpSpfRecord> allProviderResultSets = resultSets.Select(x => x.CloneWithDifferentProvider("All Providers")).ToList();
+            List<DomDatProIpSpfRecord> allProviderResultSets = resultSets.Select(x => x.CloneWithDifferentProvider("All Providers", null)).ToList();
             resultSets.AddRange(allProviderResultSets);
             
             return resultSets;
         }
         
-        private static DomDatProIpSpfRecord CreateDomDatProIpSpf(long recordId, string domain, DateTime date, string provider, string ip, int count, string spfDomain, string spfResult)
+        private static DomDatProIpSpfRecord CreateDomDatProIpSpf(long recordId, string domain, DateTime date, string provider, string originalProvider, string ip, int count, string spfDomain, string spfResult)
         {
             if (spfResult == "pass")
             {
-                return new DomDatProIpSpfRecord(recordId, domain, date, provider, ip, spfDomain, count, 0);
+                return new DomDatProIpSpfRecord(recordId, domain, date, provider, originalProvider, ip, spfDomain, count, 0);
             }
 
-            return new DomDatProIpSpfRecord(recordId, domain, date, provider, ip, spfDomain, 0, count);
+            return new DomDatProIpSpfRecord(recordId, domain, date, provider, originalProvider, ip, spfDomain, 0, count);
         }
     }
 }

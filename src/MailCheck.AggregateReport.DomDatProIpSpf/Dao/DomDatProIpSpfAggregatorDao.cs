@@ -20,6 +20,7 @@ namespace MailCheck.AggregateReport.DomDatProIpSpf.Dao
                     "domain",
                     "date",
                     "provider",
+                    "original_provider",
                     "ip",
                     "spf_domain",
                     "spf_pass",
@@ -46,6 +47,7 @@ namespace MailCheck.AggregateReport.DomDatProIpSpf.Dao
             yield return KeyValuePair.Create<string, object>("domain", record.Domain);
             yield return KeyValuePair.Create<string, object>("date", record.Date.ToString("yyyy-MM-dd"));
             yield return KeyValuePair.Create<string, object>("provider", record.Provider);
+            yield return KeyValuePair.Create<string, object>("original_provider", record.OriginalProvider);
             yield return KeyValuePair.Create<string, object>("ip", record.Ip);
             yield return KeyValuePair.Create<string, object>("spf_domain", record.SpfDomain);
             yield return KeyValuePair.Create<string, object>("spf_pass", record.SpfPass);

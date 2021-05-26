@@ -22,7 +22,7 @@ namespace MailCheck.Intelligence.Api
 
             if (RunInDevMode())
             {
-                webHostBuilder.UseUrls("http://localhost:5007");
+                webHostBuilder.UseUrls("http://+:5007");
             }
 
             return webHostBuilder;

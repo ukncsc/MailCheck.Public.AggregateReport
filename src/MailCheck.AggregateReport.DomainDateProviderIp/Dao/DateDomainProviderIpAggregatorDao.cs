@@ -73,7 +73,7 @@ namespace MailCheck.AggregateReport.DomainDateProviderIp.Dao
             yield return KeyValuePair.Create<string, object>("domain", record.Domain);
             yield return KeyValuePair.Create<string, object>("date", record.Date.ToString("yyyy-MM-dd"));
             yield return KeyValuePair.Create<string, object>("provider", record.Provider);
-            yield return KeyValuePair.Create<string, object>("original_provider", record.Provider);
+            yield return KeyValuePair.Create<string, object>("original_provider", record.OriginalProvider);
             yield return KeyValuePair.Create<string, object>("ip", record.Ip);
             yield return KeyValuePair.Create<string, object>("hostname", record.Hostname);
             yield return KeyValuePair.Create<string, object>("spf_pass_dkim_pass_none", record.SpfPassDkimPassNone);

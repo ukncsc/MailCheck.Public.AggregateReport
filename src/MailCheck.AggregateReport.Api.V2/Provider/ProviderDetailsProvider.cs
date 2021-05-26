@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,6 +18,9 @@ namespace MailCheck.AggregateReport.Api.V2.Provider
         public readonly Dictionary<string, string> ProviderAlias;
         public readonly Dictionary<string, string> AliasProvider;
         public readonly Dictionary<string, string> ProviderMarkdown;
+
+        private readonly string _feedbackMarkdown = 
+        $"{Environment.NewLine}***{Environment.NewLine}### Did this help?{Environment.NewLine}Email [mailcheck@digital.ncsc.gov.uk](mailto:mailcheck@digital.ncsc.gov.uk) if you note any errors or have any tips you would like to share.";
         
         public ProviderDetailsProvider()
         {
@@ -32,7 +36,7 @@ namespace MailCheck.AggregateReport.Api.V2.Provider
         {
             if (ProviderMarkdown.ContainsKey(provider))
             {
-                return ProviderMarkdown[provider];
+                return string.Concat(ProviderMarkdown[provider], _feedbackMarkdown);
             }
 
             return null;

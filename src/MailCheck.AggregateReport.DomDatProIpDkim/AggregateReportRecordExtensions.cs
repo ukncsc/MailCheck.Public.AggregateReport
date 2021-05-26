@@ -13,13 +13,8 @@ namespace MailCheck.AggregateReport.DomDatProIpDkim
             long id = long.Parse(aggregateReportRecord.RecordId);
             string domain = aggregateReportRecord.HeaderFrom?.Trim().Trim('.').ToLower() ?? aggregateReportRecord.DomainFrom.ToLower();
             string ip = aggregateReportRecord.HostSourceIp;
-            string provider = aggregateReportRecord.HostProvider;
-            if (aggregateReportRecord.Dkim == DmarcResult.fail &&
-                aggregateReportRecord.Spf == DmarcResult.fail &&
-                aggregateReportRecord.ProxyBlockListCount + aggregateReportRecord.SuspiciousNetworkBlockListCount + aggregateReportRecord.HijackedNetworkBlockListCount + aggregateReportRecord.EndUserNetworkBlockListCount + aggregateReportRecord.SpamSourceBlockListCount + aggregateReportRecord.MalwareBlockListCount + aggregateReportRecord.EndUserBlockListCount + aggregateReportRecord.BounceReflectorBlockListCount > 0)
-            {
-                provider = "Blocklisted";
-            }
+            string provider = aggregateReportRecord.GetProvider();
+            string originalProvider = aggregateReportRecord.HostProvider;
 
             DateTime date = aggregateReportRecord.EffectiveDate.Date;
             int count = aggregateReportRecord.Count;
@@ -39,10 +34,10 @@ namespace MailCheck.AggregateReport.DomDatProIpDkim
             }
 
             List<DomDatProIpDkimRecord> resultSets = dkimDomainResults.Select(x =>
-                    CreateDomDatProIpDkim(id, domain, date, provider,ip, count, x.Item1, x.Item2, x.Item3))
+                    CreateDomDatProIpDkim(id, domain, date, provider, originalProvider, ip, count, x.Item1, x.Item2, x.Item3))
                 .ToList();
 
-            List<DomDatProIpDkimRecord> allProviderResultSets = resultSets.Select(x => x.CloneWithDifferentProvider("All Providers")).ToList();
+            List<DomDatProIpDkimRecord> allProviderResultSets = resultSets.Select(x => x.CloneWithDifferentProvider("All Providers", null)).ToList();
             resultSets.AddRange(allProviderResultSets);
             
             
@@ -50,14 +45,14 @@ namespace MailCheck.AggregateReport.DomDatProIpDkim
         }
         
         private static DomDatProIpDkimRecord CreateDomDatProIpDkim(long recordId, string domain, DateTime date, 
-                string provider, string ip, int count, string dkimDomain, string dkimSelector, string dkimResult)
+                string provider, string originalProvider, string ip, int count, string dkimDomain, string dkimSelector, string dkimResult)
         {
             if (dkimResult == "pass")
             {
-                return new DomDatProIpDkimRecord(recordId, domain, date, provider, ip, dkimDomain, dkimSelector, count, 0);
+                return new DomDatProIpDkimRecord(recordId, domain, date, provider, originalProvider, ip, dkimDomain, dkimSelector, count, 0);
             }
 
-            return new DomDatProIpDkimRecord(recordId, domain, date, provider, ip, dkimDomain, dkimSelector, 0, count);
+            return new DomDatProIpDkimRecord(recordId, domain, date, provider, originalProvider, ip, dkimDomain, dkimSelector, 0, count);
         }
     }
 }

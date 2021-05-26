@@ -12,8 +12,8 @@ namespace MailCheck.AggregateReport.DomainDateProviderIp
             long id = long.Parse(aggregateReportRecord.RecordId);
             string domain = aggregateReportRecord.HeaderFrom?.Trim().Trim('.').ToLower() ?? aggregateReportRecord.DomainFrom.ToLower();
             string ip = aggregateReportRecord.HostSourceIp;
-            string provider = aggregateReportRecord.HostProvider;
-            string originalProvider = null;
+            string provider = aggregateReportRecord.GetProvider();
+            string originalProvider = aggregateReportRecord.HostProvider;
             string hostname = aggregateReportRecord.HostName;
             DateTime date = aggregateReportRecord.EffectiveDate.Date;
             int count = aggregateReportRecord.Count;
@@ -41,23 +41,13 @@ namespace MailCheck.AggregateReport.DomainDateProviderIp
             int arc = aggregateReportRecord.Arc ? count : 0;
             int otherOverrideReason = aggregateReportRecord.OtherOverrideReason ? count : 0;
             
-            if (aggregateReportRecord.Dkim == DmarcResult.fail &&
-                aggregateReportRecord.Spf == DmarcResult.fail &&
-                proxyBlockListCount + suspiciousNetworkBlockListCount + hijackedNetworkBlockListCount +
-                endUserNetworkBlockListCount + spamSourceBlockListCount + malwareBlockListCount +
-                endUserBlockListCount + bounceReflectorBlockListCount > 0)
-            {
-                originalProvider = provider;
-                provider = "Blocklisted";
-            }
-
             DomainDateProviderIpRecord record = CreateDomainDateProviderIp(spfResult, dkimResult, disposition, id, domain,
                 date, provider, originalProvider, ip, hostname, count, spfMisalignedCount, dkimMisAlignedCount, proxyBlockListCount, suspiciousNetworkBlockListCount,
                 hijackedNetworkBlockListCount, endUserNetworkBlockListCount, spamSourceBlockListCount, malwareBlockListCount,
                 endUserBlockListCount, bounceReflectorBlockListCount, forwarded, sampledOut, trustedForwarder,
                 mailingList, localPolicy, arc, otherOverrideReason);
             
-            return new List<DomainDateProviderIpRecord> {record, record.CloneWithDifferentProvider("All Providers")};
+            return new List<DomainDateProviderIpRecord> {record, record.CloneWithDifferentProvider("All Providers", null)};
         }
         
         private static DomainDateProviderIpRecord CreateDomainDateProviderIp(DmarcResult spfResult, DmarcResult dkimResult,

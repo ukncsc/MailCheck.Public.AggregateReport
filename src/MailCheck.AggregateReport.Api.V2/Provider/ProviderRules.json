@@ -1,58 +1,246 @@
 {
-  "providerAliases": [
-    {
-      "provider": "testProvider",
-      "mapping": "testAlias"
-    },
-    {
-      "provider": "outlook.com",
-      "mapping": "Microsoft Office 365"
-    },
-    {
-      "provider": "Blocklisted",
-      "mapping": "Source IP on DNS Block List"
-    },
-    {
-      "provider": "Unrouted",
-      "mapping": "Unrouted - Prefix not advertised to the internet"
-    },
-    {
-      "provider": "",
-      "mapping": "Provider lookup failed"
-    },
-    {
-      "provider": "lsoft.se",
-      "mapping": "LISTSERV Mailing List (from L-Soft)"
-    },
-    {
-      "provider": "createsend.com",
-      "mapping": "Campaign Monitor/CreateSend"
-    },
-    {
-      "provider": "pd25.com",
-      "mapping": "Pardot"
-    },
-    {
-      "provider": "ondemand.com",
-      "mapping": "SAP Cloud"
-    },
-    {
-      "provider": "nw007.com",
-      "mapping": "Poppulo (formerly Newsweaver)"
-    },
-    {
-      "provider": "mtasv.net",
-      "mapping": "Postmark"
-    },
-    {
-      "provider": "qemailserver.com",
-      "mapping": "Qualtrics"
-    },
-    {
-      "provider": "bmsend.com",
-      "mapping": "Benchmark Email"
-    }
-  ],
+    "providerAliases": [
+        {
+            "provider": "testProvider",
+            "mapping": "testAlias"
+        },
+        {
+            "provider": "outlook.com",
+            "mapping": "Microsoft Office 365"
+        },
+        {
+            "provider": "Blocklisted",
+            "mapping": "Source IP on DNS Block List"
+        },
+        {
+            "provider": "Unrouted",
+            "mapping": "Unrouted - Prefix not advertised to the internet"
+        },
+        {
+            "provider": "",
+            "mapping": "Provider lookup failed"
+        },
+        {
+            "provider": "lsoft.se",
+            "mapping": "LISTSERV Mailing List (from L-Soft)"
+        },
+        {
+            "provider": "google.com",
+            "mapping": "Google"
+        },
+        {
+            "provider": "mimecast.com",
+            "mapping": "Mimecast"
+        },
+        {
+            "provider": "amazonses.com",
+            "mapping": "Amazon SES"
+        },
+        {
+            "provider": "sendgrid.net",
+            "mapping": "Sendgrid"
+        },
+        {
+            "provider": "zdsys.com",
+            "mapping": "Zendesk"
+        },
+        {
+            "provider": "mailgun.net",
+            "mapping": "Mailgun (mailgun.net)"
+        },
+        {
+            "provider": "mailgun.us",
+            "mapping": "Mailgun (mailgun.us)"
+        },
+        {
+            "provider": "createsend.com",
+            "mapping": "Campaign Monitor (createsend.com)"
+        },
+        {
+            "provider": "messagelabs.com",
+            "mapping": "MessageLabs / Symantec"
+        },
+        {
+            "provider": "constantcontact.com",
+            "mapping": "Constant contact"
+        },
+        {
+            "provider": "govdelivery.com",
+            "mapping": "Gov Delivery Granicus"
+        },
+        {
+            "provider": "sender-sib.com",
+            "mapping": "Sendinblue (sender-sib.com)"
+        },
+        {
+            "provider": "mailin.fr",
+            "mapping": "Sendinblue (mailin.fr)"
+        },
+        {
+            "provider": "wpmhost.net",
+            "mapping": "WPM Education"
+        },
+        {
+            "provider": "exlibrisgroup.com",
+            "mapping": "Ex Libris"
+        },
+        {
+            "provider": "mailjet.com",
+            "mapping": "MailJet"
+        },
+        {
+            "provider": "blackbaud.com",
+            "mapping": "Blackbaud (blackbaud.com)"
+        },
+        {
+            "provider": "blackbaud.net",
+            "mapping": "Blackbaud (blackbaud.net)"
+        },
+        {
+            "provider": "pd25.com",
+            "mapping": "Pardot (pd25.com)"
+        },
+        {
+            "provider": "ondemand.com",
+            "mapping": "SAP Cloud (ondemand.com)"
+        },
+        {
+            "provider": "newzapp.co.uk",
+            "mapping": "NewZapp  Communications"
+        },
+        {
+            "provider": "trendmicro.eu",
+            "mapping": "Trend Micro"
+        },
+        {
+            "provider": "midlandhr.co.uk",
+            "mapping": "Midland HR"
+        },
+        {
+            "provider": "nw007.com",
+            "mapping": "Poppulo (formerly Newsweaver)"
+        },
+        {
+            "provider": "mtasv.net",
+            "mapping": "Postmark (mtasv.net)"
+        },
+        {
+            "provider": "qemailserver.com",
+            "mapping": "Qualtrics (qemailserver.com)"
+        },
+        {
+            "provider": "askadmissionmail.co.uk",
+            "mapping": "ApplyYourself by Campus Mgmt (askadmissionmail.co.uk)"
+        },
+        {
+            "provider": "iphmx.com",
+            "mapping": "Cisco's Ironport Cloud email service (iphmx.com)"
+        },
+        {
+            "provider": "bmsend.com",
+            "mapping": "Benchmark Email (bmsend.com)"
+        },
+        {
+            "provider": "salesforce.com",
+            "mapping": "Salesforce"
+        },
+        {
+            "provider": "pphosted.com",
+            "mapping": "Proofpoint (pphosted.com)"
+        },
+        {
+            "provider": "electric.net",
+            "mapping": "Vipre Email Security (electric.net)"
+        },
+        {
+            "provider": "mailcontrol.com",
+            "mapping": "Forcepoint (mailcontrol.com)"
+        },
+        {
+            "provider": "pb-dynmktge.com",
+            "mapping": "Microsoft Dynamics 365 (pb-dynmktge.com)"
+        },
+        {
+            "provider": "pur3.net",
+            "mapping": "Pure360 (pur3.net)"
+        },
+        {
+            "provider": "1e100.net",
+            "mapping": "Google (1e100.net)"
+        },
+        {
+            "provider": "kundenserver.de",
+            "mapping": "1&1 (kundenserver.de)"
+        },
+        {
+            "provider": "yahoo.com",
+            "mapping": "Yahoo"
+        },
+        {
+            "provider": "as9143.net",
+            "mapping": "Virgin Media (as9143.net)"
+        },
+        {
+            "provider": "secureserver.net",
+            "mapping": "GoDaddy (secureserver.net)"
+        },
+        {
+            "provider": "btinternet.com",
+            "mapping": "BT Mail"
+        },
+        {
+            "provider": "mailcore.me",
+            "mapping": "123 Reg (mailcore.me)"
+        },
+        {
+            "provider": "livemail.co.uk",
+            "mapping": "Fasthosts (livemail.co.uk)"
+        },
+        {
+            "provider": "hostedemail.com",
+            "mapping": "OpenSRS (Tucows) (hostedemail.com)"
+        },
+        {
+            "provider": "me.com",
+            "mapping": "Apple iCloud (me.com)"
+        },
+        {
+            "provider": "talktalk.net",
+            "mapping": "TalkTalk"
+        },
+        {
+            "provider": "tiscali.co.uk",
+            "mapping": "Tiscali"
+        },
+        {
+            "provider": "hosts.co.uk",
+            "mapping": "Namesco (hosts.co.uk)"
+        },
+        {
+            "provider": "stackmail.com",
+            "mapping": "20i email (stackmail.com)"
+        },
+        {
+            "provider": "plus.net",
+            "mapping": "Plusnet"
+        },
+        {
+            "provider": "gandi.net",
+            "mapping": "Gandi"
+        },
+        {
+            "provider": "dreamhost.com",
+            "mapping": "DreamHost"
+        },
+        {
+            "provider": "pobox.com",
+            "mapping": "Pobox/Fastmail/Mailstore"
+        },
+        {
+            "provider": "ARC-Forwarded",
+            "mapping": "Forwarded email untrusted but delivered due to ARC"
+        }
+    ],
 
   "providerMarkdowns": [
     {
@@ -61,17 +249,28 @@
     },
     {
       "provider": "google.com",
-      "mapping": "If you don't use Google to send email, this traffic is likely to be caused by the use of Google Groups and other forwarding by Google.
+      "mapping": "### Advice if you are using G Suite
+[Set up SPF](https://support.google.com/a/answer/33786?hl=en&visit_id=637268770055534067-2515943138&rd=1)
 
-Google Groups is a legitimate online forum and email distribution service. You may see Groups email traffic in your reports even if you don't use Google to send email.
+[Set up DKIM](https://support.google.com/a/answer/180504)
 
-When Groups forwards email it checks your DMARC record. 
-If your policy is:  
+For configuration using Google as a relay please consult latest guidance online.
+### What other Google traffic can appear in your reports?
 
-* p=none - it spoofs your original domain, which may then fail SPF and DKIM checks
-* p=quarantine or p=reject - it does not spoof your domain
+Google traffic can often appear in your traffic, caused by either:
 
-Change your DMARC policy to p=quarantine and pct=0. This policy is the same as p=none but stops Groups spoofing your domain."
+* the use of Google Groups
+* the effects of your emails being auto-forwarded (eg to Gmail accounts).
+
+### How Google Groups fixes DMARC for you
+When Groups forwards email it checks your DMARC record. If your policy is:
+
+* `p=none` - it spoofs your original domain, which may then fail SPF and DKIM checks
+* `p=quarantine` or `p=reject` - it does not spoof your domain
+
+When you are ready to move to a DMARC policy of quarantine, you can change your DMARC policy to `p=quarantine` and `pct=0`. This policy is the same as p=none but stops Groups spoofing your domain.
+### Auto-forwarded Google traffic
+The best advice we have for all types of forwarded emails is to try to apply DKIM to as many of your systems as possible. For example, if a DKIM signed email from Office 365 is forwarded through Google it is likely to retain DKIM. SPF on the other hand will almost certainly not pass once emails have been forwarded."
     },
     {
       "provider": "Blocklisted",
@@ -96,15 +295,146 @@ We currently check the following lists:
 
 You should still be able to perform a 'whois' lookup on this IP address if you would like more information. We are also working on including this into Mail Check."
     },
-    {
-      "provider": "lsoft.se",
-      "mapping": "This is a mailing list service using the LISTSERV platform. If you are a UK University, College or other academic institution this is likely to be the service [JiscMail](https://www.jiscmail.ac.uk).
-      
+	{
+		"provider": "outlook.com",
+		"mapping": "[Microsoft advice on configuring SPF](https://docs.microsoft.com/en-us/office365/securitycompliance/set-up-spf-in-office-365-to-help-prevent-spoofing)
+		
+[Microsoft advice on configuring DKIM](https://docs.microsoft.com/en-us/office365/securitycompliance/use-dkim-to-validate-outbound-email)"
+	},
+	{
+		"provider": "amazonses.com",
+		"mapping": "**Note:** Mail Check has detected you use Amazon SES - but note that this quite often indicates use of Amazon to support another system (eg an HR or finance system).
+
+[Amazon advice on configuring SPF](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/send-email-authentication-spf.html)
+
+[Amazon advice on configuring DKIM](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/send-email-authentication-dkim.html)"
+	},
+	{
+		"provider": "sendgrid.net",
+		"mapping": "[SendGrid advice on configuring SPF and DKIM](https://sendgrid.com/docs/User_Guide/Settings/Whitelabel/domains.html)"
+	},
+	{
+		"provider": "zdsys.com",
+		"mapping": "[Zendesk advice on configuring SPF](https://support.zendesk.com/hc/en-us/articles/203683886-Allowing-Zendesk-to-send-email-on-behalf-of-your-email-domain)
+		
+[Zendesk advice on configuring DKIM](https://support.zendesk.com/hc/en-us/articles/203663326)"
+	},
+	{
+		"provider": "mailgun.net",
+		"mapping": "[Mailgun advice on configurating SPF and DKIM](https://documentation.mailgun.com/en/latest/user_manual.html#verifying-your-domain)"
+	},
+	{
+		"provider": "mailgun.us",
+		"mapping": "[Mailgun advice on configurating SPF and DKIM](https://documentation.mailgun.com/en/latest/user_manual.html#verifying-your-domain)"
+	},
+	{
+		"provider": "createsend.com",
+		"mapping": "[Campaign Monitor advice on SPF and DKIM](https://help.campaignmonitor.com/manage-your-own-authentication)"
+	},
+	{
+		"provider": "messagelabs.com",
+		"mapping": "[Symantec advice on SPF](https://knowledge.broadcom.com/external/article?legacyId=TECH226211)
+		
+[Symantec advice on DKIM](https://techdocs.broadcom.com/us/en/symantec-security-software/email-security/messaging-gateway/10-7-3/Spam_5/enabling-dkim-signing-for-a-domain-v27452323-d419e2546.html)"
+	},
+	{
+		"provider": "constantcontact.com",
+		"mapping": "[Constant Contact advice on SPF and DKIM](https://knowledgebase.constantcontact.com/articles/KnowledgeBase/5865-overview-of-what-is-involved-in-the-authentication-process?q=spf&pnx=1&lang=en_US)"
+	},
+	{
+		"provider": "clickdimensions.com",
+		"mapping": "[Click Dimensions advice on configuring SPF](https://support.clickdimensions.com/hc/en-us/articles/115001162874-SPF-Records-For-ClickDimensions)
+		
+[Click Dimensions advice on configuring DKIM](https://support.clickdimensions.com/hc/en-us/articles/115001163534-Deliverability-DKIM-Signing)"
+	},
+	{
+		"provider": "govdelivery.com",
+		"mapping": "[govDelivery advice on configuring SPF](https://support.granicus.com/s/article/Using-SPF-Records-to-Improve-Email-Deliverability?ui-force-components-controllers-recordGlobalValueProvider.RecordGvp.getRecord=1&r=3)
+		
+[govDelivery advice on configuring DKIM](https://granicus.com/blog/4-steps-to-avoid-email-spoofing/)"
+	},
+	{
+		"provider": "sender-sib.com",
+		"mapping": "[Sendinblue advice on configuring SPF and DKIM](https://help.sendinblue.com/hc/en-us/articles/209577385-Understand-SPF-DKIM-and-DMARC-protocols)"
+	},
+	{
+		"provider": "mailin.fr",
+		"mapping": "[Sendinblue advice on configuring SPF and DKIM](https://help.sendinblue.com/hc/en-us/articles/209577385-Understand-SPF-DKIM-and-DMARC-protocols)"
+	},
+	{
+		"provider": "wpmhost.net",
+		"mapping": "According to our records, it is only possible to configure SPF for this system currently.
+		
+Please contact WPM Education directly to find out how to set this up."
+	},
+	{
+		"provider": "exlibrisgroup.com",
+		"mapping": "According to our records, it is only possible to configure SPF for this system currently.
+Please contact WPM Education directly to find out how to set this up.
+
+[Ex Libris advice on configuring SPF](https://knowledge.exlibrisgroup.com/Primo/Knowledge_Articles/Some_e-mail_Addresses_Fail_on_Send_from_Details_Tab_or_e-Shelf)"
+	},
+	{
+		"provider": "mailjet.com",
+		"mapping": "[MailJet advice on configuring SPF and DKIM](https://app.mailjet.com/support/how-to-setup-domainkeys-dkim-and-spf-in-my-dns-records,84.htm)"
+	},
+	{
+		"provider": "blackbaud.com",
+		"mapping": "[Blackbaud advice on configuring SPF](https://docs.blackbaud.com/email-resource-center/overview/client/sender-authentication/spf)
+		
+[Blackbaud advice on configuring DKIM](https://docs.blackbaud.com/email-resource-center/overview/client/sender-authentication/dkim)"
+	},
+	{
+		"provider": "blackbaud.net",
+		"mapping": "[Blackbaud advice on configuring SPF](https://docs.blackbaud.com/email-resource-center/overview/client/sender-authentication/spf)
+		
+[Blackbaud advice on configuring DKIM](https://docs.blackbaud.com/email-resource-center/overview/client/sender-authentication/dkim)"
+	},
+	{
+		"provider": "pd25.com",
+		"mapping": "[Pardot advice on configuring SPF](https://help.salesforce.com/articleView?id=pardot_email_authentication_add_spf_dkim_to_dns.htm&type=5)
+		
+[Pardot advice on configuring DKIM](https://help.salesforce.com/articleView?id=pardot_email_authentication_generate_dkim.htm&type=5)"
+	},
+	{
+		"provider": "mtasv.net",
+		"mapping": "[Postmark advice pages for SPF and DKIM](https://postmarkapp.com/support/sending-emails#domain-authentication)"
+	},
+	{
+		"provider": "newzapp.co.uk",
+		"mapping": "[NewZapp information on SPF](https://support.newzappcommunications.co.uk/portal/en/kb/articles/setting-up-your-spf-and-dmarc-records)"
+	},
+	{
+		"provider": "trendmicro.eu",
+		"mapping": "[Trend Micro advice on SPF](https://success.trendmicro.com/solution/1057622-emails-sent-via-hosted-email-security-hes-outbound-filtering-are-blocked-by-some-destination-mail)
+
+For DKIM advice contact Trend Micro support"
+	},
+	{
+		"provider": "lsoft.se",
+		"mapping": "This is a mailing list service using the LISTSERV platform. If you are a UK University, College or other academic institution this is likely to be the service [JiscMail](https://www.jiscmail.ac.uk/).
+
 You do not need to configure SPF or DKIM for this email provider. Like many mailing lists, this platform has a ‘handler’ that will automatically detect when you move to a DMARC policy of quarantine or reject, and will ensure emails related to the JiscMail platform are still delivered.
-      
-When you are ready to move to a DMARC policy of quarantine, then start by applying a percentage value of pct=0. This is the same as a DMARC policy of p=none, but you will also be able to assure yourself that ListServ has stopped spoofing your domain.
-      
+
+When you are ready to move to a DMARC policy of quarantine, then start by applying a percentage value of `pct=0`. This is the same as a DMARC policy of `p=none`, but you will also be able to assure yourself that ListServ has stopped spoofing your domain.
+
 The NCSC has [further information on applying pct values in the DMARC record](https://www.ncsc.gov.uk/collection/email-security-and-anti-spoofing/mark-spoof-emails-as-spam)"
+    },
+    {
+      "provider": "ARC-Forwarded",
+      "mapping": "This category is for all forwarded email that is signed by DKIM, and then signed by the intermediate provider using Authenticated Receive Chain (ARC) who asserts that the DKIM signature was valid when they received it. 
+      
+Technically these emails fail DKIM but can be considered normal forwarded emails from a trusted source"
+    },
+    {
+      "provider": "mimecast.com",
+      "mapping": "[Mimecast advice on configuring SPF](https://community.mimecast.com/s/article/Connect-Application-Implementing-SPF-for-Outbound-Email-Delivery-731048977)
+		
+[Mimecast advice on configuring DKIM](https://community.mimecast.com/s/article/DNS-Authentication-Configuration-Guide-345109074)"
+    },
+    {
+      "provider": "MailChimp",
+      "mapping": "[Mail Chimp advice on configuring SPF and DKIM](https://kb.mailchimp.com/accounts/email-authentication/set-up-custom-domain-authentication-dkim-and-spf)"
     }
   ]
 }

@@ -3,10 +3,10 @@
     public static class DomDatProIpDkimRecordExtensions
     {
         public static DomDatProIpDkimRecord CloneWithDifferentProvider(this DomDatProIpDkimRecord record,
-            string provider)
+            string provider, string originalProvider)
         {
             return new DomDatProIpDkimRecord(record.Id, record.Domain, record.Date,
-                provider, record.Ip, record.DkimDomain, record.DkimSelector, record.DkimPass, record.DkimFail);
+                provider, originalProvider, record.Ip, record.DkimDomain, record.DkimSelector, record.DkimPass, record.DkimFail);
         }
     }
 }

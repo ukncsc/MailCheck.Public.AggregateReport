@@ -10,6 +10,7 @@ namespace MailCheck.AggregateReport.DomDatProIpDkim
             string domain,
             DateTime date,
             string provider,
+            string originalProvider,
             string ip,
             string dkimDomain,
             string dkimSelector,
@@ -21,6 +22,7 @@ namespace MailCheck.AggregateReport.DomDatProIpDkim
             Domain = domain;
             Date = date;
             Provider = provider;
+            OriginalProvider = originalProvider;
             Ip = ip;
             DkimDomain = dkimDomain;
             DkimSelector = dkimSelector;
@@ -29,6 +31,7 @@ namespace MailCheck.AggregateReport.DomDatProIpDkim
         }
         public DateTime Date { get; }
         public string Provider { get; }
+        public string OriginalProvider { get; }
         public long Id { get; }
         public string Domain { get; }
         public string Ip { get; }

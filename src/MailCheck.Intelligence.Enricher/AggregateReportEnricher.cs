@@ -62,7 +62,7 @@ namespace MailCheck.Intelligence.Enricher
                 await _publisher.Publish(aggregateReportRecordEnriched, _enricherConfig.SnsTopicArn);
             }
 
-            _log.LogInformation($"Enricher published batch of {enrichedReports.Count} enriched aggregate reports from request for {message.Records.Count} in {stopwatch.Elapsed.Milliseconds} ms");
+            _log.LogInformation($"Enricher published batch of {enrichedReports.Count} enriched aggregate reports from request for {message.Records.Count} in {stopwatch.ElapsedMilliseconds} ms");
             stopwatch.Stop();
         }
     }

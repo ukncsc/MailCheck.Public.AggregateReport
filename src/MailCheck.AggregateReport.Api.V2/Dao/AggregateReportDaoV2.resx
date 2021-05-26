@@ -276,8 +276,7 @@ GROUP BY provider) as tb
     </value>
   </data>
   <data name="SelectSingleProviderStats" xml:space="preserve">
-    <value>
-SELECT `domain`,
+    <value>SELECT `domain`,
 `provider`,
 `domain` as `subdomain`,
 SUM(`spf_pass_dkim_pass_none`) as `spf_pass_dkim_pass_none`,
@@ -352,15 +351,18 @@ LIMIT @offset, @pageSize;
   </data>
   <data name="SelectIpStats" xml:space="preserve">
     <value>
-SELECT `domain`,
+SELECT a.*,
+(SELECT `hostname` FROM `domain_date_provider_ip`
+WHERE domain = @domain
+AND provider = @provider
+AND ip = a.ip
+AND date BETWEEN @startDate AND @endDate
+GROUP BY hostname ORDER BY count(*) DESC LIMIT 1) hostname 
+FROM (
+SELECT
+`domain`,
 `provider`,
 `ip`,
-(SELECT `hostname` FROM `domain_date_provider_ip`
-  WHERE domain = @domain
-  AND provider = @provider
-  AND ip = a.ip
-  AND date BETWEEN @startDate AND @endDate
-  GROUP BY hostname ORDER BY count(*) DESC LIMIT 1) `hostname`,
 SUM(`spf_pass_dkim_pass_none`) as `spf_pass_dkim_pass_none`,
 SUM(`spf_pass_dkim_fail_none`) as `spf_pass_dkim_fail_none`,
 SUM(`spf_fail_dkim_pass_none`) as `spf_fail_dkim_pass_none`,
@@ -409,7 +411,7 @@ AND (@ip IS NULL OR ip = @ip)
 AND date BETWEEN @startDate AND @endDate
 GROUP BY ip
 ORDER BY `total_emails` DESC
-LIMIT @offset, @pageSize;
+LIMIT @offset, @pageSize) a;
     </value>
   </data>
   <data name="SelectSpfDomainStats" xml:space="preserve">
@@ -608,13 +610,11 @@ FROM
 `eslr`
 WHERE reverse_domain = @reverseDomain
 AND effective_date BETWEEN @startDate AND @endDate
-AND (@provider IS NULL OR provider = @provider)
-AND (@ip IS NULL OR ip = @ip);
-    </value>
+AND ((@provider IS NULL OR @provider = 'All Providers') OR provider = @provider)
+AND (@ip IS NULL OR ip = @ip);</value>
   </data>
   <data name="SelectAggregateExportDataWithSubdomains" xml:space="preserve">
-    <value>
-SELECT
+    <value>SELECT
 effective_date,
 domain,
 provider,
@@ -660,9 +660,8 @@ FROM
 `eslr`
 WHERE (reverse_domain = @reverseDomain OR reverse_domain LIKE CONCAT(@reverseDomain, '.%'))
 AND effective_date BETWEEN @startDate AND @endDate
-AND (@provider IS NULL OR provider = @provider)
-AND (@ip IS NULL OR ip = @ip);
-    </value>
+AND ((@provider IS NULL OR @provider = 'All Providers') OR provider = @provider)
+AND (@ip IS NULL OR ip = @ip);</value>
   </data>
   <data name="FilterByIp" xml:space="preserve">
     <value>AND (@ip IS NULL OR ip = @ip)</value>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using MailCheck.AggregateReport.Parser.Domain.Dmarc;
+using MailCheck.AggregateReport.Parser.Exceptions;
 using MailCheck.AggregateReport.Parser.Utils;
 
 namespace MailCheck.AggregateReport.Parser.Serialisation.AggregateReportDeserialisation
@@ -35,7 +36,7 @@ namespace MailCheck.AggregateReport.Parser.Serialisation.AggregateReportDeserial
 
             if (result == null)
             {
-                throw new ArgumentException("Expected element 'result' was not found");
+                throw new ArgumentException("Expected element 'result' was not found in SPF Auth Results");
             }
 
             //Single as expecting to get the element, nullable as the result from the element might not be in the enum from the spec.
@@ -48,7 +49,7 @@ namespace MailCheck.AggregateReport.Parser.Serialisation.AggregateReportDeserial
             // For a result of "none" some implementations omit the domain element
             if (domain is null && spfResult != SpfResult.none)
             {
-                throw new ArgumentException("Expected element 'domain' was not found");
+                throw new ArgumentException("Expected element 'domain' was not found in SPF Auth Results");
             }
 
             return new SpfAuthResult(domain, spfDomainScope, spfResult);

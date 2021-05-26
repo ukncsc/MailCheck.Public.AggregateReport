@@ -23,7 +23,7 @@ namespace MailCheck.AggregateReport.Parser.Test.Serialisation.AggregateReportDes
         {
             XElement xElement = XElement.Parse(SpfAuthResultsDeserialiserTestsResource.NoDomainTag);
             var exception = Assert.Throws<ArgumentException>(() => _spfAuthResultsDeserialiser.Deserialise(new[] { xElement }));
-            Assert.That(exception.Message, Is.EqualTo("Expected element 'domain' was not found"));
+            Assert.That(exception.Message, Is.EqualTo("Expected element 'domain' was not found in SPF Auth Results"));
         }
 
         [Test]
@@ -65,7 +65,7 @@ namespace MailCheck.AggregateReport.Parser.Test.Serialisation.AggregateReportDes
         {
             XElement xElement = XElement.Parse(SpfAuthResultsDeserialiserTestsResource.NoResult);
             var exception = Assert.Throws<ArgumentException>(() => _spfAuthResultsDeserialiser.Deserialise(new[] { xElement }));
-            Assert.That(exception.Message, Is.EqualTo("Expected element 'result' was not found"));
+            Assert.That(exception.Message, Is.EqualTo("Expected element 'result' was not found in SPF Auth Results"));
         }
 
         [Test]
@@ -95,7 +95,7 @@ namespace MailCheck.AggregateReport.Parser.Test.Serialisation.AggregateReportDes
         {
             XElement xElement = XElement.Parse(SpfAuthResultsDeserialiserTestsResource.NotDirectDescendants);
             var exception = Assert.Throws<ArgumentException>(() => _spfAuthResultsDeserialiser.Deserialise(new[] { xElement }));
-            Assert.That(exception.Message, Is.EqualTo("Expected element 'result' was not found")); 
+            Assert.That(exception.Message, Is.EqualTo("Expected element 'result' was not found in SPF Auth Results")); 
         }
 
     }

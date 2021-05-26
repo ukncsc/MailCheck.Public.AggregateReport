@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -41,20 +42,31 @@ namespace MailCheck.Intelligence.Enricher.ReverseDns.Processor
 
             while (attempt < maxAttempts)
             {
+                Stopwatch stopwatch = Stopwatch.StartNew();
                 await Task.Delay(attempt * attempt * 1000);
                 attempt++;
-
+                
                 try
                 {
                     ReverseDnsQueryResponse response = await _dnsResolver.QueryPtrAsync(originalAddress);
-
-                    if (response.HasError && attempt < maxAttempts) continue;
-
+                    
                     if (response.HasError)
                     {
-                        _log.LogWarning("Failed to do PTR look up for {IpAddress} with error: {Error}.", originalAddress, response.ErrorMessage ?? "Unknown error");
+                        if (attempt < maxAttempts)
+                        {
+                           _log.LogInformation($"PTR lookup attempt {attempt} for ip {originalAddress} resulted in error and took {stopwatch.ElapsedMilliseconds} ms." +
+                                $"Error: {response.ErrorMessage ?? "Unknown Error"}");
+                            continue;
+                        }
+                        
+                        _log.LogWarning(
+                            $"PTR lookup attempt {attempt} for ip {originalAddress} resulted in error and took {stopwatch.ElapsedMilliseconds} ms." +
+                            $"Error: {response.ErrorMessage ?? "Unknown Error"}");
+
                         return ReverseDnsResult.InvalidReverseDnsResult;
-                    }
+                    } 
+                    
+                    _log.LogInformation($"PTR lookup attempt {attempt} for ip {originalAddress} resulted in success and took {stopwatch.ElapsedMilliseconds} ms.");
 
                     List<string> hosts = response.Results;
 
@@ -66,7 +78,7 @@ namespace MailCheck.Intelligence.Enricher.ReverseDns.Processor
                 }
                 catch (Exception e)
                 {
-                    string errorMessage = $"Error occured performing PTR lookup for {originalAddress} (attempt {attempt} of {maxAttempts})";
+                    string errorMessage = $"PTR lookup attempt {attempt} of {maxAttempts} for ip {originalAddress} resulted in exception and took {stopwatch.ElapsedMilliseconds} ms.";
 
                     if (attempt == maxAttempts)
                     {
@@ -88,24 +100,34 @@ namespace MailCheck.Intelligence.Enricher.ReverseDns.Processor
             foreach (var host in hosts)
             {
                 List<string> ipAddresses = new List<string>();
-
                 if (!string.IsNullOrWhiteSpace(host))
                 {
-                    ReverseDnsQueryResponse forward = await _dnsResolver.QueryAddressAsync<T>(host, queryType);
+                    Stopwatch stopwatch = Stopwatch.StartNew();
 
-                    if (!forward.HasError)
+                    try
                     {
-                        ipAddresses.AddRange(forward.Results);
-                        responses.Add(new ReverseDnsResponse(host, ipAddresses));
+                        ReverseDnsQueryResponse forward = await _dnsResolver.QueryAddressAsync<T>(host, queryType);
+
+                        if (!forward.HasError)
+                        {
+                            ipAddresses.AddRange(forward.Results);
+                            responses.Add(new ReverseDnsResponse(host, ipAddresses));
+                            _log.LogInformation($"ReverseDns lookup for host {host} resulted in success and took {stopwatch.ElapsedMilliseconds} ms.");
+                        }
+                        else
+                        {
+                            _log.LogWarning(
+                                $"Failed to do dns query type: {queryType}. ReverseDns lookup for host {host} resulted in error: {forward.ErrorMessage ?? "Unknown error"}.");
+                        }
                     }
-                    else
+                    
+                    catch (Exception e)
                     {
-                        _log.LogWarning("Failed to do dns query type: {QueryType} for {Host} with error: {Error}.",
-                            queryType, host, forward.ErrorMessage ?? "Unknown error");
+                        _log.LogWarning(e,$"ReverseDns lookup for host {host} resulted in exception and took {stopwatch.ElapsedMilliseconds} ms.");                
                     }
+
                 }
             }
-
             return responses;
         }
     }

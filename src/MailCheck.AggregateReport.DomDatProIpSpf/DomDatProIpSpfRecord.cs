@@ -10,6 +10,7 @@ namespace MailCheck.AggregateReport.DomDatProIpSpf
             string domain,
             DateTime date,
             string provider,
+            string originalProvider,
             string ip,
             string spfDomain,
             long spfPass,
@@ -20,6 +21,7 @@ namespace MailCheck.AggregateReport.DomDatProIpSpf
             Domain = domain;
             Date = date;
             Provider = provider;
+            OriginalProvider = originalProvider;
             Ip = ip;
             SpfDomain = spfDomain;
             SpfPass = spfPass;
@@ -27,6 +29,7 @@ namespace MailCheck.AggregateReport.DomDatProIpSpf
         }
         public DateTime Date { get; }
         public string Provider { get; }
+        public string OriginalProvider { get; }
         public long Id { get; }
         public string Domain { get; }
         public string Ip { get; }

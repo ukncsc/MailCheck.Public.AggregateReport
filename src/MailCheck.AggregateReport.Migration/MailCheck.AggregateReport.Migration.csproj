@@ -19,6 +19,7 @@
     <None Remove="Scripts\2019-11-01-1220_add_domain_date_provider_ip_aggregation_original_provider.sql" />
     <None Remove="Scripts\2020-05-29-1847_temp_table_grants.sql" />
     <None Remove="Scripts\everytime\grants.sql" />
+    <None Remove="Scripts\2020-07-02-1704_alter_domain_date_provider_ip_aggregation_blocklist %28copy%29.sql" />
   </ItemGroup>
   
   <ItemGroup>
@@ -51,6 +52,7 @@
     <EmbeddedResource Include="Scripts\2020-07-02-1703_alter_eslr_table_blocklist.sql" />
     <EmbeddedResource Include="Scripts\2020-07-02-1704_alter_domain_date_provider_ip_aggregation_blocklist.sql" />
     <EmbeddedResource Include="Scripts\everytime\grants.sql" />
+    <EmbeddedResource Include="Scripts\2020-11-30-1043_add_original_provider_columns.sql" />
   </ItemGroup>
 
   <ItemGroup>

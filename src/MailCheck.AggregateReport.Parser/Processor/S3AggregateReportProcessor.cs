@@ -89,6 +89,12 @@ namespace MailCheck.AggregateReport.Parser.Processor
                             {
                                 aggregateReportInfo = _parser.Parse(emailMessageInfo);
                             }
+                            catch (Exception e)
+                            {
+                                _logger.LogWarning(e,
+                                    $"Bad formatting in attachment {emailMessageInfo.EmailMetadata?.Filename}");
+                                throw new AggregateReportFormatException("Exception thrown during parse", e);
+                            }
                             finally
                             {
                                 emailMessageInfo.EmailStream.Dispose();
@@ -115,36 +121,51 @@ namespace MailCheck.AggregateReport.Parser.Processor
                                 },
                                 TransactionScopeAsyncFlowOption.Enabled))
                             {
-                                aggregateReportInfo = await _persistor.Persist(aggregateReportInfo);
+                                try
+                                {
+                                    aggregateReportInfo = await _persistor.Persist(aggregateReportInfo);
+                                    
+                                    _logger.LogDebug(
+                                        $"Successfully persisted report in s3 object {s3SourceInfo.BucketName}/{s3SourceInfo.ObjectName}, " +
+                                        $"message Id: {s3SourceInfo.MessageId}, request Id: {s3SourceInfo.RequestId}.");
 
-                                _logger.LogDebug(
-                                    $"Successfully persisted report in s3 object {s3SourceInfo.BucketName}/{s3SourceInfo.ObjectName}, " +
-                                    $"message Id: {s3SourceInfo.MessageId}, request Id: {s3SourceInfo.RequestId}.");
+                                    await _publisher.Publish(aggregateReportInfo);
 
-                                await _publisher.Publish(aggregateReportInfo);
+                                    _logger.LogDebug(
+                                        $"Successfully published report/s in s3 object {s3SourceInfo.BucketName}/{s3SourceInfo.ObjectName}, " +
+                                        $"message Id: {s3SourceInfo.MessageId}, request Id: {s3SourceInfo.RequestId}.");
 
-                                _logger.LogDebug(
-                                    $"Successfully published report/s in s3 object {s3SourceInfo.BucketName}/{s3SourceInfo.ObjectName}, " +
-                                    $"message Id: {s3SourceInfo.MessageId}, request Id: {s3SourceInfo.RequestId}.");
-
-                                transactionScope.Complete();
+                                    transactionScope.Complete();
+                                }
+                                catch (Exception e) when (LogException(e))
+                                {
+                                }
                             }
                         }
                     }
                 }
-                catch (DuplicateAggregateReportException)
+                catch (AggregateReportParserException)
                 {
-                    _logger.LogInformation(
-                        $"Duplicate report in s3 object {s3SourceInfo.BucketName}/{s3SourceInfo.ObjectName}, " +
-                        $"message Id: {s3SourceInfo.MessageId}, request Id: {s3SourceInfo.RequestId} ignored.");
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e,
-                        $"Failed to process s3 object {s3SourceInfo.BucketName}/{s3SourceInfo.ObjectName} message Id: {s3SourceInfo.MessageId}, request Id: {s3SourceInfo.RequestId}");
-                    throw;
                 }
             }
+        }
+
+        private bool LogException(Exception e)
+        {
+            switch (e)
+            {
+                case DuplicateAggregateReportException duplicateException:
+                    _logger.LogInformation(e, "Duplicate Exception");
+                    break;
+                case AggregateReportParserException parserException:
+                    _logger.LogWarning(e, "Parser Exception");
+                    break;
+                default:
+                    _logger.LogError(e, "Unexpected error occurred");
+                    break;
+            }
+
+            return false;
         }
     }
 }

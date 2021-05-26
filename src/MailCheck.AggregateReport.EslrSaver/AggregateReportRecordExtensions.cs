@@ -15,8 +15,8 @@ namespace MailCheck.AggregateReport.EslrSaver
             DateTime effectiveDate = aggregateReportRecord.EffectiveDate.Date;
             string domain = DomainNameUtils.ToCanonicalDomainName(aggregateReportRecord.HeaderFrom ?? aggregateReportRecord.DomainFrom);
             string reverseDomain = DomainNameUtils.ReverseDomainName(domain);
-            string provider = aggregateReportRecord.HostProvider;
-            string originalProvider = null;
+            string provider = aggregateReportRecord.GetProvider();
+            string originalProvider = aggregateReportRecord.HostProvider;
             string reporterOrgName = aggregateReportRecord.ReporterOrgName;
             string ip = aggregateReportRecord.HostSourceIp;
             int count = aggregateReportRecord.Count;
@@ -54,17 +54,7 @@ namespace MailCheck.AggregateReport.EslrSaver
             int malwareBlockListCount = aggregateReportRecord.MalwareBlockListCount;
             int endUserBlockListCount = aggregateReportRecord.EndUserBlockListCount;
             int bounceReflectorBlockListCount = aggregateReportRecord.BounceReflectorBlockListCount;
-            
-            if (aggregateReportRecord.Dkim == DmarcResult.fail &&
-                aggregateReportRecord.Spf == DmarcResult.fail &&
-                proxyBlockListCount + suspiciousNetworkBlockListCount + hijackedNetworkBlockListCount +
-                endUserNetworkBlockListCount + spamSourceBlockListCount + malwareBlockListCount +
-                endUserBlockListCount + bounceReflectorBlockListCount > 0)
-            {
-                originalProvider = provider;
-                provider = "Blocklisted";
-            }
-
+                        
             return new EslrSaverRecord(
                 recordId, effectiveDate, domain, reverseDomain, provider, originalProvider, reporterOrgName, ip, count,
                 disposition, dkim, spf, envelopeTo, envelopeFrom, headerFrom, organisationDomainFrom, 

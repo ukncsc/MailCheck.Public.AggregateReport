@@ -16,6 +16,11 @@
     <PackageReference Include="MailCheck.Common.Environment" Version="4.0.0" />
     <PackageReference Include="MailCheck.Common.Logging" Version="4.0.0" />
     <PackageReference Include="MailCheck.Common.Util" Version="4.0.0" />
+    <PackageReference Include="Scrutor" Version="3.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MailCheck.AggregateReport.Contracts\MailCheck.AggregateReport.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>
