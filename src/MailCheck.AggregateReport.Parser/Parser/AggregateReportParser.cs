@@ -35,8 +35,11 @@ namespace MailCheck.AggregateReport.Parser.Parser
 
         public AggregateReportInfo Parse(EmailMessageInfo messageInfo)
         {
-            List<AttachmentInfo> attachments = _mimeMessageFactory
-                .Create(messageInfo.EmailStream)
+            var mimeMessage = _mimeMessageFactory.Create(messageInfo.EmailStream);
+
+            _log.LogInformation($"Successfully parsed S3 object as MimeMessage. From: {mimeMessage.From} Subject: {mimeMessage.Subject}");
+
+            List<AttachmentInfo> attachments = mimeMessage
                 .BodyParts.OfType<MimePart>()
                 .Select(_attachmentStreamNormaliser.Normalise)
                 .Where(_ => !_.Equals(AttachmentInfo.EmptyAttachmentInfo))

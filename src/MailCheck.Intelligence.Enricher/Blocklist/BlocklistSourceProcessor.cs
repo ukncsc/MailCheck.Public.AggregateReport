@@ -16,84 +16,71 @@ namespace MailCheck.Intelligence.Enricher.Blocklist
 {
     public interface IBlocklistSourceProcessor
     {
-        Task<List<BlocklistResult>> ProcessSource(List<string> ipAddresses);
+        IEnumerable<Task<BlocklistResult>> ProcessSource(List<string> ipAddresses);
     }
 
     public class BlocklistSourceProcessor : IBlocklistSourceProcessor
     {
-        private readonly BlockListSource _source;
+        private const string NonExistentDomainError = "Non-Existent Domain";
+
+        private readonly BlocklistSource _source;
         private readonly ILookupClient _lookupClient;
         private readonly ILogger<BlocklistSourceProcessor> _log;
-
-        private const int MaxRequestsInPeriod = 10;
-        private const int RateLimitPeriod = 1000;
-
-        public BlocklistSourceProcessor(BlockListSource source, ILookupClient lookupClient, ILogger<BlocklistSourceProcessor> log)
+        
+        public BlocklistSourceProcessor(BlocklistSource source, ILookupClient lookupClient, ILogger<BlocklistSourceProcessor> log)
         {
+        
             _source = source;
             _lookupClient = lookupClient;
             _log = log;
         }
 
-        public async Task<List<BlocklistResult>> ProcessSource(List<string> ipAddresses)
+        public IEnumerable<Task<BlocklistResult>> ProcessSource(List<string> ipAddresses)
         {
-            List<BlocklistResult> results = new List<BlocklistResult>();
+            var queries = ipAddresses
+                .Select(ip => new { ip, query = GetQuery(ip, _source.Suffix) })
+                .ToArray();
 
-            IEnumerable<IEnumerable<string>> batches = ipAddresses.Batch(MaxRequestsInPeriod);
-
-            foreach (IEnumerable<string> batch in batches)
+            var badIps = queries.Where(q => q.query == null).Select(q => q.ip).ToArray();
+            if (badIps.Length > 0)
             {
-                Stopwatch stopwatch = Stopwatch.StartNew();
-
-                List<Task<BlocklistResult>> lookupTasks = batch
-                    .Select(x => TryLookup(GetQuery(x, _source.Suffix))
-                    .ContinueWith(y => MapToBlocklistResult(x, y.Result))).ToList();
-                Task delayTask = Task.Delay(RateLimitPeriod);
-
-
-                await Task.WhenAll(new List<Task>(lookupTasks) { delayTask }.ToArray());
-
-                BlocklistResult[] batchResults = await Task.WhenAll(lookupTasks);
-
-                results.AddRange(batchResults);
-                _log.LogInformation($"Looked up batch of {batchResults.Length} from source {_source.Suffix} after {stopwatch.ElapsedMilliseconds} ms.");
+                _log.LogInformation($"Found bad IPs in batch for lookup from source {_source.Suffix}.{Environment.NewLine}{string.Join(Environment.NewLine, badIps)}");
             }
 
-            return results;
+            var goodIps = queries.Where(q => q.query != null).ToArray();
+
+            return goodIps
+                .Select(async q =>
+                {
+                    var response = await TryLookup(q.query);
+                    return MapToBlocklistResult(q.ip, response);
+                });
         }
 
         private async Task<IDnsQueryResponse> TryLookup(string query)
         {
+            Stopwatch stopwatch = Stopwatch.StartNew();
             IDnsQueryResponse result = null;
 
-            int attempt = 0;
-            int maxAttempts = 5;
-
-            while (attempt < maxAttempts)
+            try
             {
-                Stopwatch stopwatch = Stopwatch.StartNew();
-                await Task.Delay(attempt * attempt * 1000);
-                attempt++;
-                
-                try
+                result = await _lookupClient.QueryAsync(query, QueryType.A);
+
+                if (!result.HasError)
                 {
-                    result = await _lookupClient.QueryAsync(query, QueryType.A);
-                    
-                    if (!result.HasError)
-                    {
-                        _log.LogInformation(
-                            $"Blocklist lookup attempt {attempt} of query {query} for source {_source.Suffix} resulted in success and took {stopwatch.ElapsedMilliseconds} ms.");
-                        break;
-                    }
-                    
                     _log.LogInformation(
-                        $"Blocklist lookup attempt {attempt} of query {query} for source {_source.Suffix} resulted in error and took {stopwatch.ElapsedMilliseconds} ms." +
-                        $"Error: {result.ErrorMessage ?? "Unknown Error"}");
+                        $"Blocklist lookup of query {query} for source {_source.Suffix} resulted in success and took {stopwatch.ElapsedMilliseconds} ms.");
                 }
-                catch (Exception e)
+                else
                 {
-                    _log.LogInformation(e,$"Blocklist lookup attempt {attempt} of query {query} for source {_source.Suffix} resulted in exception and took {stopwatch.ElapsedMilliseconds} ms.");                
+                    _log.LogInformation(
+                        $"Blocklist lookup of query {query} for source {_source.Suffix} resulted in error and took {stopwatch.ElapsedMilliseconds} ms." +
+                        $"Error: {result.ErrorMessage ?? "Unknown Error"}{Environment.NewLine}{result.AuditTrail}");
                 }
+            }
+            catch (Exception e)
+            {
+                _log.LogWarning(e, $"Blocklist lookup of query {query} for source {_source.Suffix} resulted in exception and took {stopwatch.ElapsedMilliseconds} ms.");                
             }
 
             return result;
@@ -110,18 +97,16 @@ namespace MailCheck.Intelligence.Enricher.Blocklist
                         return $"{ipAddressReversed}{suffix}";
 
                     case AddressFamily.InterNetworkV6:
-                        string digits = UncompressIpV6(ipAddress).Replace(":", "");
+                        string digits = UncompressIpV6(parsedIpAddress).Replace(":", "");
                         return $"{string.Join('.', digits.Reverse())}{suffix}";
                 }
             }
 
-            throw new ArgumentException("Unexpected IPAddress format", "ipAddress");
+            return null;
         }
 
-        private string UncompressIpV6(string input)
+        private string UncompressIpV6(IPAddress ipAddress)
         {
-            IPAddress ipAddress = IPAddress.Parse(input);
-
             byte[] bytes = ipAddress.GetAddressBytes();
             StringBuilder builder = new StringBuilder();
 
@@ -138,17 +123,25 @@ namespace MailCheck.Intelligence.Enricher.Blocklist
         {
             if (dnsResponse is null)
             {
-                return new BlocklistResult(ipAddress);
+                return BlocklistResult.Inconclusive(ipAddress, "Exception occurred");
+            }
+
+            if (dnsResponse.HasError)
+            {
+                if (dnsResponse.ErrorMessage == NonExistentDomainError)
+                    return new BlocklistResult(ipAddress);
+
+                return BlocklistResult.Inconclusive(ipAddress, dnsResponse.ErrorMessage);
             }
 
             List<string> ipAddressesOfARecords = dnsResponse.Answers.OfType<ARecord>().Select(x => x.Address.ToString()).ToList();
 
-            List<BlocklistAppearance> blockListAppearances = _source.Data
+            List<BlocklistAppearance> blocklistAppearances = _source.Data
                 .Where(x => ipAddressesOfARecords.Contains(x.IpAddress))
                 .Select(y => new BlocklistAppearance(y.Flag, y.Source, y.Description))
                 .ToList();
 
-            return new BlocklistResult(ipAddress, blockListAppearances);
+            return new BlocklistResult(ipAddress, blocklistAppearances);
         }
     }
 }

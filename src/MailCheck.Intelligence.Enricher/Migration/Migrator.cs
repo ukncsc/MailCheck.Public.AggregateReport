@@ -61,7 +61,7 @@ namespace MailCheck.Intelligence.Enricher.Migration
 
                 foreach (ReverseDnsResult reverseDnsResult in recordsToSaveForDate)
                 {
-                    IpAddressDetails ipAddressDetails = new IpAddressDetails(reverseDnsResult.OriginalIpAddress, date, null, null, null, null, reverseDnsResult.ForwardResponses, null, null, date);
+                    IpAddressDetails ipAddressDetails = new IpAddressDetails(reverseDnsResult.OriginalIpAddress, date, null, null, null, null, reverseDnsResult.ForwardResponses, null, null, date, false);
 
                     ipAddressDetailsForDate.Add(ipAddressDetails);
                 }

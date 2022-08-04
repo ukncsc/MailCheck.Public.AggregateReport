@@ -201,7 +201,7 @@ namespace MailCheck.Intelligence.Api.Test.Services
 
             return new List<IpAddressDetails>
             {
-                new IpAddressDetails(ipAddress, date ?? DateTime.MinValue, asNumber, description,countryCode, blockListOccurrences, reverseDnsResponses, asnLookupTimestamp,blocklistLookupTimestamp, reverseDnsLookupTimestamp)
+                new IpAddressDetails(ipAddress, date ?? DateTime.MinValue, asNumber, description,countryCode, blockListOccurrences, reverseDnsResponses, asnLookupTimestamp,blocklistLookupTimestamp, reverseDnsLookupTimestamp, false)
             };
         }
     }

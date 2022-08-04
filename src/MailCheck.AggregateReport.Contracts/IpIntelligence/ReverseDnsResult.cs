@@ -5,17 +5,22 @@ namespace MailCheck.AggregateReport.Contracts.IpIntelligence
 {
     public class ReverseDnsResult
     {
-        public static ReverseDnsResult InvalidReverseDnsResult = new ReverseDnsResult(null, null);
-
         public ReverseDnsResult(string originalIpAddress, List<ReverseDnsResponse> forwardResponses)
         {
             OriginalIpAddress = originalIpAddress;
             ForwardResponses = forwardResponses ?? new List<ReverseDnsResponse>();
         }
 
+        private ReverseDnsResult(string originalIpAddress)
+        {
+            OriginalIpAddress = originalIpAddress;
+        }
+
         public string OriginalIpAddress { get; }
 
         public List<ReverseDnsResponse> ForwardResponses { get; }
+
+        public bool IsInconclusive { get; private set; }
 
         protected bool Equals(ReverseDnsResult other)
         {
@@ -43,6 +48,14 @@ namespace MailCheck.AggregateReport.Contracts.IpIntelligence
         public override string ToString()
         {
             return $"{nameof(OriginalIpAddress)}: {OriginalIpAddress}, {nameof(ForwardResponses)}: {string.Join(Environment.NewLine, ForwardResponses)}";
+        }
+
+        public static ReverseDnsResult Inconclusive(string originalIpAddress)
+        {
+            return new ReverseDnsResult(originalIpAddress)
+            {
+                IsInconclusive = true
+            };
         }
     }
 }

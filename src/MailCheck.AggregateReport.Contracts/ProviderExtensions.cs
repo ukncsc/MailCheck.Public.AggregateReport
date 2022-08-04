@@ -17,6 +17,13 @@ namespace MailCheck.AggregateReport.Contracts
                 return "Blocklisted";
             }
 
+            if (aggregateReportRecord.Dkim == DmarcResult.fail &&
+              aggregateReportRecord.Spf == DmarcResult.fail &&
+              (aggregateReportRecord.HostName == "Unknown" || aggregateReportRecord.HostName == "Mismatch"))
+            {
+                return "ReverseDnsFail";
+            }
+
             return aggregateReportRecord.HostProvider;
         }
     }

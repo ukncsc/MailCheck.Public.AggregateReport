@@ -43,7 +43,7 @@ namespace MailCheck.Intelligence.Enricher.Test
         private IpAddressDetails CreateResponse(string asDescription = "")
         {
             return new IpAddressDetails("", DateTime.MaxValue, 12, asDescription,
-                "", new List<BlocklistAppearance>(), new List<ReverseDnsResponse>(), DateTime.MaxValue, DateTime.MaxValue, DateTime.MaxValue);
+                "", new List<BlocklistAppearance>(), new List<ReverseDnsResponse>(), DateTime.MaxValue, DateTime.MaxValue, DateTime.MaxValue, false);
         }
 
         private AggregateReportRecord CreateSource(DmarcResult dkimResult = DmarcResult.pass, DmarcResult spfResult = DmarcResult.pass)

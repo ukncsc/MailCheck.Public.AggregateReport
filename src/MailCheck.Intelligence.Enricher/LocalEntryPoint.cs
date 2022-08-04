@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Amazon.Lambda.SQSEvents;
 using Amazon.SQS;
@@ -12,17 +13,27 @@ namespace MailCheck.Intelligence.Enricher
 {
     public static class LocalEntryPoint
     {
-        public static void Main(string[] args)
-        {
-            CommandLineApplication commandLineApplication = new CommandLineApplication(false);
+        private static CancellationTokenSource cancellationTokenSource;
 
-            commandLineApplication.OnExecute(() =>
+        public static int Main(string[] args)
+        {
+            cancellationTokenSource = new CancellationTokenSource();
+            Console.CancelKeyPress += Console_CancelKeyPress;
+            Console.Title = "MailCheck.Intelligence.Enricher";
+            CommandLineApplication commandLineApplication = new CommandLineApplication(false);
+            
+            commandLineApplication.OnExecute(async () =>
             {
-                RunLambda().ConfigureAwait(false).GetAwaiter().GetResult();
+                await RunLambda();
                 return 0;
             });
 
-            commandLineApplication.Execute(args);
+            return commandLineApplication.Execute(args);
+        }
+
+        private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
+        {
+            cancellationTokenSource.Cancel();
         }
 
         private static async Task RunLambda()
@@ -40,7 +51,7 @@ namespace MailCheck.Intelligence.Enricher
                 AttributeNames = new List<string> { "All" },
             };
 
-            while (true)
+            while (!cancellationTokenSource.IsCancellationRequested)
             {
                 Console.WriteLine($"Polling {queueUrl} for messages...");
                 ReceiveMessageResponse receiveMessageResponse = await client.ReceiveMessageAsync(receiveMessageRequest);

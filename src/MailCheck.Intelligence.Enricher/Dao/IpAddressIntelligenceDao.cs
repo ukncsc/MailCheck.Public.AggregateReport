@@ -115,13 +115,12 @@ namespace MailCheck.Intelligence.Enricher.Dao
                     int blocklistUpdatedOrdinal = reader.GetOrdinal("blocklist_updated");
                     DateTime? blocklistUpdated = reader.IsDBNull(blocklistUpdatedOrdinal) ? (DateTime?)null : reader.GetDateTime("blocklist_updated");
 
-
                     int reverseDnsUpdatedOrdinal = reader.GetOrdinal("reverse_dns_updated");
                     DateTime? reverseDnsUpdated = reader.IsDBNull(reverseDnsUpdatedOrdinal) ? (DateTime?)null : reader.GetDateTime("reverse_dns_updated");
 
                     IpAddressDetails ipAddressDetails = new IpAddressDetails(
                         ipAddress, date, asNumber, description, countryCode, blocklistData, reverseDnsData, asnUpdated,
-                        blocklistUpdated, reverseDnsUpdated);
+                        blocklistUpdated, reverseDnsUpdated, false);
 
                     result.Add(ipAddressDetails);
                 }
@@ -199,7 +198,8 @@ namespace MailCheck.Intelligence.Enricher.Dao
                         string.IsNullOrEmpty(reverseDnsData) ? null : JsonConvert.DeserializeObject<List<ReverseDnsResponse>>(reverseDnsData),
                         asnUpdated,
                         blocklistUpdated,
-                        reverseDnsUpdated);
+                        reverseDnsUpdated,
+                        false);
 
                     results.Add(ipAddressDetails);
                 }

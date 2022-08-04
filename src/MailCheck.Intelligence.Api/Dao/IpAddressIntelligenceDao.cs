@@ -80,7 +80,8 @@ namespace MailCheck.Intelligence.Api.Dao
                         string.IsNullOrEmpty(reverseDnsData) ? null : JsonConvert.DeserializeObject<List<ReverseDnsResponse>>(reverseDnsData),
                         asnUpdated,
                         blocklistUpdated,
-                        reverseDnsUpdated);
+                        reverseDnsUpdated,
+                        false);
 
                     results.Add(ipAddressDetails);
                 }

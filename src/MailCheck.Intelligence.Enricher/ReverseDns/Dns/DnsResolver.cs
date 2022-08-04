@@ -25,8 +25,8 @@ namespace MailCheck.Intelligence.Enricher.ReverseDns.Dns
         public async Task<ReverseDnsQueryResponse> QueryPtrAsync(IPAddress originalAddress)
         {
             IDnsQueryResponse response = await _lookupClient.QueryAsync(originalAddress.GetArpaName(), QueryType.PTR);
-
-            return new ReverseDnsQueryResponse(response.HasError, response.ErrorMessage,
+            
+            return new ReverseDnsQueryResponse(response.HasError, response.ErrorMessage, response.AuditTrail,
                 response.HasError 
                     ? null
                     : response.Answers.OfType<PtrRecord>().Select(_ => _.PtrDomainName.Original).Distinct().ToList());
@@ -37,7 +37,7 @@ namespace MailCheck.Intelligence.Enricher.ReverseDns.Dns
         {
             IDnsQueryResponse forward = await _lookupClient.QueryAsync(host, queryType);
 
-            return new ReverseDnsQueryResponse(forward.HasError, forward.ErrorMessage,
+            return new ReverseDnsQueryResponse(forward.HasError, forward.ErrorMessage, forward.AuditTrail,
                 forward.HasError
                     ? null
                     : forward.Answers.OfType<T>().Select(x => x.Address.ToString()).ToList());
@@ -48,12 +48,14 @@ namespace MailCheck.Intelligence.Enricher.ReverseDns.Dns
     {
         public bool HasError { get; }
         public string ErrorMessage { get; }
+        public string AuditTrail { get; set; }
         public List<string> Results { get; }
 
-        public ReverseDnsQueryResponse(bool hasError, string errorMessage, List<string> results)
+        public ReverseDnsQueryResponse(bool hasError, string errorMessage, string auditTrail, List<string> results)
         {
             HasError = hasError;
             ErrorMessage = errorMessage;
+            AuditTrail = auditTrail;
             Results = results ?? new List<string>();
         }
     }

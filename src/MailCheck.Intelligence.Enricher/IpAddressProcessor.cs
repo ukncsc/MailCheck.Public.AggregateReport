@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MailCheck.AggregateReport.Contracts.IpIntelligence;
@@ -37,8 +38,11 @@ namespace MailCheck.Intelligence.Enricher
             if (cacheMisses.Any())
             {
                 _log.LogInformation($"Looking up {cacheMisses.Count} IpAddressDetails not found in database");
+
                 List<IpAddressDetails> lookedUpDetails = await _ipAddressLookup.Lookup(cacheMisses);
-                await _ipAddressDetailsDao.SaveIpAddressDetails(lookedUpDetails);
+                List<IpAddressDetails> validLookedUpDetails = lookedUpDetails.Where(x => !x.ReverseDnsInconclusive).ToList();
+
+                await _ipAddressDetailsDao.SaveIpAddressDetails(validLookedUpDetails);
                 cachedDetails.AddRange(lookedUpDetails);
             }
 

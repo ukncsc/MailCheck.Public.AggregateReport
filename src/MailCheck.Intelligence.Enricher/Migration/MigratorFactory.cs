@@ -68,10 +68,10 @@ namespace MailCheck.Intelligence.Enricher.Migration
 
         private static IServiceCollection RegisterBlocklistSources(this IServiceCollection serviceCollection)
         {
-            string sources = File.ReadAllText("Blocklist/blockListSources.json");
-            List<BlockListSource> blocklistSources = JsonConvert.DeserializeObject<List<BlockListSource>>(sources);
+            string sources = File.ReadAllText("Blocklist/blocklistSources.json");
+            List<BlocklistSource> blocklistSources = JsonConvert.DeserializeObject<List<BlocklistSource>>(sources);
 
-            foreach (BlockListSource blockListSource in blocklistSources)
+            foreach (BlocklistSource blockListSource in blocklistSources)
             {
                 serviceCollection.AddTransient<IBlocklistSourceProcessor>(x => new BlocklistSourceProcessor(blockListSource, x.GetRequiredService<ILookupClient>(), x.GetRequiredService<ILogger<BlocklistSourceProcessor>>()));
             }
@@ -81,27 +81,18 @@ namespace MailCheck.Intelligence.Enricher.Migration
 
         private static ILookupClient CreateLookupClient(IServiceProvider serviceProvider)
         {
-            bool runningWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-
-            if (runningWindows)
-            {
-                //return new LookupClient(NameServer.GooglePublicDns, NameServer.GooglePublicDnsIPv6)
-                return new LookupClient()
-                {
-                    Timeout = serviceProvider.GetRequiredService<IEnricherConfig>().DnsRecordLookupTimeout
-                };
-            }
-
-            IDnsNameServerProvider dnsNameServerProvider = serviceProvider.GetService<IDnsNameServerProvider>();
             TimeSpan dnsRecordLookupTimeout = serviceProvider.GetRequiredService<IEnricherConfig>().DnsRecordLookupTimeout;
+            IDnsNameServerProvider dnsNameServerProvider = serviceProvider.GetService<IDnsNameServerProvider>();
             List<IPAddress> nameServers = dnsNameServerProvider.GetNameServers();
             IPEndPoint[] endPoints = nameServers.Select(_ => new IPEndPoint(_, 53)).ToArray();
 
-            return new LookupClient(endPoints)
+            LookupClientOptions options = new LookupClientOptions(endPoints)
             {
                 Timeout = dnsRecordLookupTimeout,
                 UseTcpOnly = true,
             };
+
+            return new LookupClient(options);
         }
     }
 }

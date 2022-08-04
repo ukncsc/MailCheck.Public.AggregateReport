@@ -113,15 +113,121 @@ namespace MailCheck.AggregateReport.DomDatProIpDkim.Test
             Assert.AreEqual(hostProvider, result[0].OriginalProvider);
         }
 
+        [Test]
+        public void ProviderShouldNotBeOverridenWhenHostNameUnknownAndDmarcPasses()
+        {
+            string hostName = "Unknown";
+            string hostProvider = "mail.host.provider";
+
+            AggregateReportRecordEnriched aggregateReportRecordEnriched = CreateTestRecord(new List<string> { "domain1:selector1:pass" }, hostProvider: hostProvider, hostName: hostName);
+            List<DomDatProIpDkimRecord> result = aggregateReportRecordEnriched.ToDomDatProIpDkimRecord();
+
+            Assert.AreEqual(hostProvider, result[0].Provider);
+            Assert.AreEqual(hostProvider, result[0].OriginalProvider);
+        }
+
+        [Test]
+        public void ProviderShouldBeOverridenWhenHostNameUnknownAndDmarcFails()
+        {
+            string hostName = "Unknown";
+            string hostProvider = "mail.host.provider";
+            string provider = "ReverseDnsFail";
+
+            AggregateReportRecordEnriched aggregateReportRecordEnriched = CreateTestRecord(new List<string> { "domain1:selector1:pass" }, spfResult: DmarcResult.fail, dkimResult: DmarcResult.fail, hostProvider: hostProvider, hostName: hostName);
+            List<DomDatProIpDkimRecord> result = aggregateReportRecordEnriched.ToDomDatProIpDkimRecord();
+
+            Assert.AreEqual(provider, result[0].Provider);
+            Assert.AreEqual(hostProvider, result[0].OriginalProvider);
+        }
+
+        [Test]
+        public void ProviderShouldNotBeOverridenWhenHostNameMismatchedAndDmarcPasses()
+        {
+            string hostName = "Mismatch";
+            string hostProvider = "mail.host.provider";
+
+            AggregateReportRecordEnriched aggregateReportRecordEnriched = CreateTestRecord(new List<string> { "domain1:selector1:pass" }, hostProvider: hostProvider, hostName: hostName);
+            List<DomDatProIpDkimRecord> result = aggregateReportRecordEnriched.ToDomDatProIpDkimRecord();
+
+            Assert.AreEqual(hostProvider, result[0].Provider);
+            Assert.AreEqual(hostProvider, result[0].OriginalProvider);
+        }
+
+        [Test]
+        public void ProviderShouldNotBeOverridenWhenHostNameMismatchedAndSpfPasses()
+        {
+            string hostName = "Mismatch";
+            string hostProvider = "mail.host.provider";
+
+            AggregateReportRecordEnriched aggregateReportRecordEnriched = CreateTestRecord(new List<string> { "domain1:selector1:pass" }, dkimResult: DmarcResult.fail, hostProvider: hostProvider, hostName: hostName);
+            List<DomDatProIpDkimRecord> result = aggregateReportRecordEnriched.ToDomDatProIpDkimRecord();
+
+            Assert.AreEqual(hostProvider, result[0].Provider);
+            Assert.AreEqual(hostProvider, result[0].OriginalProvider);
+        }
+
+        [Test]
+        public void ProviderShouldNotBeOverridenWhenHostNameMismatchedAndDkimPasses()
+        {
+            string hostName = "Mismatch";
+            string hostProvider = "mail.host.provider";
+
+            AggregateReportRecordEnriched aggregateReportRecordEnriched = CreateTestRecord(new List<string> { "domain1:selector1:pass" }, spfResult: DmarcResult.fail, hostProvider: hostProvider, hostName: hostName);
+            List<DomDatProIpDkimRecord> result = aggregateReportRecordEnriched.ToDomDatProIpDkimRecord();
+
+            Assert.AreEqual(hostProvider, result[0].Provider);
+            Assert.AreEqual(hostProvider, result[0].OriginalProvider);
+        }
+
+        [Test]
+        public void ProviderShouldNotBeOverridenWhenHostNameUnknownAndDkimPasses()
+        {
+            string hostName = "Unknown";
+            string hostProvider = "mail.host.provider";
+
+            AggregateReportRecordEnriched aggregateReportRecordEnriched = CreateTestRecord(new List<string> { "domain1:selector1:pass" }, spfResult: DmarcResult.fail, hostProvider: hostProvider, hostName: hostName);
+            List<DomDatProIpDkimRecord> result = aggregateReportRecordEnriched.ToDomDatProIpDkimRecord();
+
+            Assert.AreEqual(hostProvider, result[0].Provider);
+            Assert.AreEqual(hostProvider, result[0].OriginalProvider);
+        }
+
+        [Test]
+        public void ProviderShouldNotBeOverridenWhenHostNameUnknownAndSpfPasses()
+        {
+            string hostName = "Unknown";
+            string hostProvider = "mail.host.provider";
+
+            AggregateReportRecordEnriched aggregateReportRecordEnriched = CreateTestRecord(new List<string> { "domain1:selector1:pass" }, dkimResult: DmarcResult.fail, hostProvider: hostProvider, hostName: hostName);
+            List<DomDatProIpDkimRecord> result = aggregateReportRecordEnriched.ToDomDatProIpDkimRecord();
+
+            Assert.AreEqual(hostProvider, result[0].Provider);
+            Assert.AreEqual(hostProvider, result[0].OriginalProvider);
+        }
+
+        [Test]
+        public void ProviderShouldBeOverridenWhenHostNameMismatchedAndDmarcFails()
+        {
+            string hostName = "Mismatch";
+            string hostProvider = "mail.host.provider";
+            string provider = "ReverseDnsFail";
+
+            AggregateReportRecordEnriched aggregateReportRecordEnriched = CreateTestRecord(new List<string> { "domain1:selector1:pass" }, spfResult: DmarcResult.fail, dkimResult: DmarcResult.fail, hostProvider: hostProvider, hostName: hostName);
+            List<DomDatProIpDkimRecord> result = aggregateReportRecordEnriched.ToDomDatProIpDkimRecord();
+
+            Assert.AreEqual(provider, result[0].Provider);
+            Assert.AreEqual(hostProvider, result[0].OriginalProvider);
+        }
+
         private AggregateReportRecordEnriched CreateTestRecord(List<string> dkimAuthResults, DmarcResult? spfResult = DmarcResult.pass,
             DmarcResult? dkimResult = DmarcResult.pass, Policy? disposition = Policy.none, int count = 0,
             string headerFrom = "digital.ncsc.gov.uk", string organisationDomain = "ncsc.gov.uk",
-            int blockListCount = 0, string hostSourceIp = "192.168.1.1", string hostProvider = "mail.host.provider", bool arc = false)
+            int blockListCount = 0, string hostSourceIp = "192.168.1.1", string hostName = "hostName", string hostProvider = "mail.host.provider", bool arc = false)
         {
             return new AggregateReportRecordEnriched("id", "1", "correlationId", "causationId", "orgName", "reportId",
                 DateTime.MaxValue, "domain", Alignment.r, Alignment.s, Policy.none, Policy.none, 1, "fo", hostSourceIp,
                 count, disposition, dkimResult, spfResult, "envelopeTo", "envelopeFrom", headerFrom, organisationDomain,
-                new List<string>(){$"{headerFrom}:{dkimResult}"}, 1, 1, dkimAuthResults, 1, 1, false, false, false, false, false, arc, false, "hostName", "hostOrganisationDomain", hostProvider, 1,
+                new List<string>(){$"{headerFrom}:{dkimResult}"}, 1, 1, dkimAuthResults, 1, 1, false, false, false, false, false, arc, false, hostName, "hostOrganisationDomain", hostProvider, 1,
                 "asDescription", "country", blockListCount, blockListCount, blockListCount, blockListCount,
                 blockListCount, blockListCount, blockListCount, blockListCount);
         }

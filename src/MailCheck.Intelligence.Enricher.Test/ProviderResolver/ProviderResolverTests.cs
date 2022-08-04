@@ -85,7 +85,8 @@ namespace MailCheck.Intelligence.Enricher.Test.ProviderResolver
                 new List<ReverseDnsResponse> { new ReverseDnsResponse("", null, organisationalDomain) },
                 DateTime.UnixEpoch,
                 DateTime.UnixEpoch,
-                DateTime.UnixEpoch);
+                DateTime.UnixEpoch,
+                false);
         }
     }
 }

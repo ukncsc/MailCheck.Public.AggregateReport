@@ -2,14 +2,14 @@
 
 namespace MailCheck.Intelligence.Enricher.Blocklist
 {
-    public class BlockListSource
+    public class BlocklistSource
     {
         public string Suffix { get; set; }
 
-        public List<BlockListAddressData> Data { get; set; }
+        public List<BlocklistAddressData> Data { get; set; }
     }
 
-    public class BlockListAddressData
+    public class BlocklistAddressData
     {
         public string IpAddress { get; set; }
         public string Source { get; set; }

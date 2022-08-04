@@ -1,10 +1,6 @@
 ﻿using System;
-using MailCheck.Common.Logging;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Serilog;
-
 namespace MailCheck.AggregateReport.Api.V2
 {
     public class Program
@@ -32,19 +28,6 @@ namespace MailCheck.AggregateReport.Api.V2
         {
             bool.TryParse(Environment.GetEnvironmentVariable("DevMode"), out bool isDevMode);
             return isDevMode;
-        }
-    }
-
-    public static class ServiceCollectionExtensions
-    {
-        public static IServiceCollection AddLogging(this IServiceCollection services)
-        {
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console(new RenderedJsonFormatter())
-                .CreateLogger();
-
-            return services
-                .AddLogging(_ => _.AddSerilog());
         }
     }
 }

@@ -1,11 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using MailCheck.AggregateReport.Contracts.IpIntelligence;
 using MailCheck.Common.Util;
 using MailCheck.Intelligence.Enricher.ReverseDns.Domain;
 using MailCheck.Intelligence.Enricher.ReverseDns.Processor;
 using MailCheck.Intelligence.Enricher.ReverseDns.PublicSuffix;
+using Microsoft.Extensions.Logging;
 
 namespace MailCheck.Intelligence.Enricher.ReverseDns
 {
@@ -18,21 +21,34 @@ namespace MailCheck.Intelligence.Enricher.ReverseDns
     {
         private readonly IReverseDnsLookup _reverseDnsLookup;
         private readonly IOrganisationalDomainProvider _organisationalDomainProvider;
+        private readonly ILogger<ReverseDnsProvider> _logger;
 
         public ReverseDnsProvider(IReverseDnsLookup reverseDnsLookup,
-            IOrganisationalDomainProvider organisationalDomainProvider)
+            IOrganisationalDomainProvider organisationalDomainProvider,
+            ILogger<ReverseDnsProvider> logger)
         {
             _reverseDnsLookup = reverseDnsLookup;
             _organisationalDomainProvider = organisationalDomainProvider;
+            _logger = logger;
         }
 
         public async Task<List<ReverseDnsResult>> GetReverseDnsResult(List<string> ipAddresses)
         {
-            List<Task<ReverseDnsResult>> lookupTasks = ipAddresses.Select(Lookup).ToList();
+            IEnumerable<Task<ReverseDnsResult>> lookupTasks = ipAddresses
+                .Select(Lookup);
+
             List<ReverseDnsResult> completedResults = new List<ReverseDnsResult>();
             foreach (IEnumerable<Task<ReverseDnsResult>> lookupTaskBatch in lookupTasks.Batch(8))
             {
-                completedResults.AddRange(await Task.WhenAll(lookupTaskBatch));
+                try
+                {
+                    var results = await Task.WhenAll(lookupTaskBatch);
+                    completedResults.AddRange(results);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Exception occurred trying to perform reverse DNS lookup");
+                }
             }
 
             return completedResults;
@@ -42,7 +58,12 @@ namespace MailCheck.Intelligence.Enricher.ReverseDns
         {
             ReverseDnsResult reverseDnsResult = await _reverseDnsLookup.Lookup(ipAddress);
 
-            if (!reverseDnsResult.ForwardResponses.Any())
+            if (reverseDnsResult.IsInconclusive)
+            {
+                return reverseDnsResult;
+            }
+
+            if (reverseDnsResult.ForwardResponses.Count == 0 || reverseDnsResult.ForwardResponses.All(x => x.IpAddresses.Count == 0))
             {
                 return new ReverseDnsResult(ipAddress, new List<ReverseDnsResponse> { new ReverseDnsResponse("Unknown", null, "Unknown") });
             }

@@ -39,6 +39,112 @@ namespace MailCheck.AggregateReport.EslrSaver.Test
             Assert.AreEqual(hostProvider, result.OriginalProvider);
         }
 
+        [Test]
+        public void ProviderShouldNotBeOverridenWhenHostNameUnknownAndDmarcPasses()
+        {
+            string hostName = "Unknown";
+            string hostProvider = "mail.host.provider";
+
+            AggregateReportRecordEnriched aggregateReportRecordEnriched = CreateTestRecord(hostProvider: hostProvider, hostname: hostName);
+            EslrSaverRecord result = aggregateReportRecordEnriched.ToEslrSaverRecord();
+
+            Assert.AreEqual(hostProvider, result.Provider);
+            Assert.AreEqual(hostProvider, result.OriginalProvider);
+        }
+
+        [Test]
+        public void ProviderShouldBeOverridenWhenHostNameUnknownAndDmarcFails()
+        {
+            string hostName = "Unknown";
+            string hostProvider = "mail.host.provider";
+            string provider = "ReverseDnsFail";
+
+            AggregateReportRecordEnriched aggregateReportRecordEnriched = CreateTestRecord(spfResult: DmarcResult.fail, dkimResult: DmarcResult.fail, hostProvider: hostProvider, hostname: hostName);
+            EslrSaverRecord result = aggregateReportRecordEnriched.ToEslrSaverRecord();
+
+            Assert.AreEqual(provider, result.Provider);
+            Assert.AreEqual(hostProvider, result.OriginalProvider);
+        }
+
+        [Test]
+        public void ProviderShouldNotBeOverridenWhenHostNameMismatchedAndDmarcPasses()
+        {
+            string hostName = "Mismatch";
+            string hostProvider = "mail.host.provider";
+
+            AggregateReportRecordEnriched aggregateReportRecordEnriched = CreateTestRecord(hostProvider: hostProvider, hostname: hostName);
+            EslrSaverRecord result = aggregateReportRecordEnriched.ToEslrSaverRecord();
+
+            Assert.AreEqual(hostProvider, result.Provider);
+            Assert.AreEqual(hostProvider, result.OriginalProvider);
+        }
+
+        [Test]
+        public void ProviderShouldNotBeOverridenWhenHostNameMismatchedAndSpfPasses()
+        {
+            string hostName = "Mismatch";
+            string hostProvider = "mail.host.provider";
+
+            AggregateReportRecordEnriched aggregateReportRecordEnriched = CreateTestRecord(dkimResult: DmarcResult.fail, hostProvider: hostProvider, hostname: hostName);
+            EslrSaverRecord result = aggregateReportRecordEnriched.ToEslrSaverRecord();
+
+            Assert.AreEqual(hostProvider, result.Provider);
+            Assert.AreEqual(hostProvider, result.OriginalProvider);
+        }
+
+        [Test]
+        public void ProviderShouldNotBeOverridenWhenHostNameMismatchedAndDkimPasses()
+        {
+            string hostName = "Mismatch";
+            string hostProvider = "mail.host.provider";
+
+            AggregateReportRecordEnriched aggregateReportRecordEnriched = CreateTestRecord(spfResult: DmarcResult.fail, hostProvider: hostProvider, hostname: hostName);
+            EslrSaverRecord result = aggregateReportRecordEnriched.ToEslrSaverRecord();
+
+            Assert.AreEqual(hostProvider, result.Provider);
+            Assert.AreEqual(hostProvider, result.OriginalProvider);
+        }
+
+        [Test]
+        public void ProviderShouldNotBeOverridenWhenHostNameUnknownAndDkimPasses()
+        {
+            string hostName = "Unknown";
+            string hostProvider = "mail.host.provider";
+
+            AggregateReportRecordEnriched aggregateReportRecordEnriched = CreateTestRecord(spfResult: DmarcResult.fail, hostProvider: hostProvider, hostname: hostName);
+            EslrSaverRecord result = aggregateReportRecordEnriched.ToEslrSaverRecord();
+
+            Assert.AreEqual(hostProvider, result.Provider);
+            Assert.AreEqual(hostProvider, result.OriginalProvider);
+        }
+
+        [Test]
+        public void ProviderShouldNotBeOverridenWhenHostNameUnknownAndSpfPasses()
+        {
+            string hostName = "Unknown";
+            string hostProvider = "mail.host.provider";
+
+            AggregateReportRecordEnriched aggregateReportRecordEnriched = CreateTestRecord(dkimResult: DmarcResult.fail, hostProvider: hostProvider, hostname: hostName);
+            EslrSaverRecord result = aggregateReportRecordEnriched.ToEslrSaverRecord();
+
+            Assert.AreEqual(hostProvider, result.Provider);
+            Assert.AreEqual(hostProvider, result.OriginalProvider);
+        }
+
+        [Test]
+        public void ProviderShouldBeOverridenWhenHostNameMismatchedAndDmarcFails()
+        {
+            string hostName = "Mismatch";
+            string hostProvider = "mail.host.provider";
+            string provider = "ReverseDnsFail";
+
+            AggregateReportRecordEnriched aggregateReportRecordEnriched = CreateTestRecord(spfResult: DmarcResult.fail, dkimResult: DmarcResult.fail, hostProvider: hostProvider, hostname: hostName);
+            EslrSaverRecord result = aggregateReportRecordEnriched.ToEslrSaverRecord();
+
+            Assert.AreEqual(provider, result.Provider);
+            Assert.AreEqual(hostProvider, result.OriginalProvider);
+        }
+
         private AggregateReportRecordEnriched CreateTestRecord(DmarcResult? spfResult = DmarcResult.pass,
             DmarcResult? dkimResult = DmarcResult.pass, Policy? disposition = Policy.none, int count = 0,
             string headerFrom = "digital.ncsc.gov.uk", string organisationDomain = "ncsc.gov.uk",

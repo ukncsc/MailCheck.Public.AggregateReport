@@ -7,12 +7,12 @@ namespace MailCheck.AggregateReport.Contracts.IpIntelligence
     public class IpAddressDetails
     {
         public IpAddressDetails(string ipAddress, DateTime date)
-         : this(ipAddress, date, null, null, null, null, null, date, date, date)
+         : this(ipAddress, date, null, null, null, null, null, date, date, date, false)
         {
         }
 
         [JsonConstructor]
-        public IpAddressDetails(string ipAddress, DateTime date, int? asNumber, string description, string countryCode, List<BlocklistAppearance> blockListOccurrences, List<ReverseDnsResponse> reverseDnsResponses, DateTime? asnLookupTimestamp, DateTime? blocklistLookupTimestamp, DateTime? reverseDnsLookupTimestamp)
+        public IpAddressDetails(string ipAddress, DateTime date, int? asNumber, string description, string countryCode, List<BlocklistAppearance> blockListOccurrences, List<ReverseDnsResponse> reverseDnsResponses, DateTime? asnLookupTimestamp, DateTime? blocklistLookupTimestamp, DateTime? reverseDnsLookupTimestamp, bool reverseDnsInconclusive)
         {
             Description = description;
             AsNumber = asNumber;
@@ -24,6 +24,7 @@ namespace MailCheck.AggregateReport.Contracts.IpIntelligence
             AsnLookupTimestamp = asnLookupTimestamp;
             BlocklistLookupTimestamp = blocklistLookupTimestamp;
             ReverseDnsLookupTimestamp = reverseDnsLookupTimestamp;
+            ReverseDnsInconclusive = reverseDnsInconclusive;
         }
 
         public string IpAddress { get; }
@@ -36,5 +37,6 @@ namespace MailCheck.AggregateReport.Contracts.IpIntelligence
         public DateTime? AsnLookupTimestamp { get; }
         public DateTime? BlocklistLookupTimestamp { get; }
         public DateTime? ReverseDnsLookupTimestamp { get; }
+        public bool ReverseDnsInconclusive { get; }
     }
 }

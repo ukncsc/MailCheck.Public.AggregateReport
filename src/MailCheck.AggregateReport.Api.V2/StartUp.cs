@@ -66,7 +66,6 @@ namespace MailCheck.AggregateReport.Api.V2
             }
 
             services
-                .AddLogging()
                 .AddHealthChecks(checks =>
                     checks.AddValueTaskCheck("HTTP Endpoint", () =>
                         new ValueTask<IHealthCheckResult>(HealthCheckResult.Healthy("Ok"))))
@@ -91,22 +90,22 @@ namespace MailCheck.AggregateReport.Api.V2
                 .AddMailCheckAuthenticationClaimsPrincipleClient()
                 .AddSerilogLogging()
                 .AddAudit("Aggregate-Report-Api-V2")
-                .AddMvc(config =>
+                .AddControllers(config =>
                 {
                     AuthorizationPolicy policy = new AuthorizationPolicyBuilder()
                         .RequireAuthenticatedUser()
                         .Build();
                     config.Filters.Add(new AuthorizeFilter(policy));
-                    config.OutputFormatters.Add(new CsvOutputFormatter(new CsvFormatterOptions()
-                    {
-                        CsvDelimiter = ",",
-                    } ));
-                })
-                .AddJsonOptions(options =>
+                }).SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0)
+                .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Serialize;
                     options.SerializerSettings.Converters.Add(new StringEnumConverter());
                 })
+                .AddMvcOptions(config => config.OutputFormatters.Add(new CsvOutputFormatter(new CsvFormatterOptions()
+                {
+                    CsvDelimiter = ",",
+                })))
                 .AddFluentValidation();
 
             services
@@ -115,7 +114,7 @@ namespace MailCheck.AggregateReport.Api.V2
               .AddMailCheckClaimsAuthentication();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (RunInDevMode())
             {
@@ -128,7 +127,11 @@ namespace MailCheck.AggregateReport.Api.V2
                .UseAuthentication()
                .UseMiddleware<AuditLoggingMiddleware>()
                .UseMiddleware<UnhandledExceptionMiddleware>()
-               .UseMvc();
+               .UseRouting()
+               .UseEndpoints(endpoints => {
+                   endpoints.MapDefaultControllerRoute();
+                   endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+               });
 
             new TelemetryConfig()
                 .InstrumentAspNet(app, "MailCheck.AggregateReport.Api.V2")
@@ -146,7 +149,7 @@ namespace MailCheck.AggregateReport.Api.V2
         {
             options.AddPolicy(CorsPolicyName, builder =>
                 builder
-                    .AllowAnyOrigin()
+                    .SetIsOriginAllowed(_ => true)
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());

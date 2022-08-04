@@ -1,5 +1,4 @@
-﻿using MailCheck.Common.Data.Migration;
-using MailCheck.Common.Data.Migration.Factory;
+﻿using MailCheck.Common.Data.Migration.Factory;
 using MailCheck.Common.Data.Migration.UpgradeEngine;
 
 namespace MailCheck.AggregateReport.Migration

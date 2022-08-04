@@ -56,8 +56,9 @@ namespace MailCheck.AggregateReport.Api.V2.Test.Integration
             _client.DefaultRequestHeaders.Add("oidc_claim_email", "value");
             _client.DefaultRequestHeaders.Add("oidc_claim_given_name", "value");
             _client.DefaultRequestHeaders.Add("oidc_claim_family_name", "value");
-            A.CallTo(() => _mailCheckAuthorisationService.IsAuthorised(A<Role>._)).Returns(true);
-            A.CallTo(() => _mailCheckAuthorisationService.IsAuthorised(A<Operation>._, A<ResourceType>._, A<string>._)).Returns(true);
+            A.CallTo(() => _mailCheckAuthorisationService.IsAuthorised(A<Role>._))
+                .Returns(new AuthorisationResult {Authorised = true});
+            A.CallTo(() => _mailCheckAuthorisationService.IsAuthorised(A<Operation>._, A<ResourceType>._, A<string>._)).Returns(new AuthorisationResult { Authorised = true });
 
             AggregateReportExportStats aggregateReportExportStats = new AggregateReportExportStats("2001-01-29", "", "", "", "", "", 234, "", "", "", "", "", "",
                 "", "", 0, 0, "", 0, 0, 0, 0, 0, 0, 0, 0, 0, "", "", "", 0, "", "", 0, 0, 0, 0, 0, 0, 0, 0);

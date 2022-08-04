@@ -77,7 +77,8 @@ namespace MailCheck.Intelligence.Enricher
                     reverseDnsResponseHasValue ? reverseDnsResult.ForwardResponses : null,
                     nowUtc.AddDays(AsnDataAgeDays).Date,
                     nowUtc,
-                    nowUtc);
+                    nowUtc,
+                    !reverseDnsResponseHasValue || reverseDnsResult.IsInconclusive);
             }).ToList();
 
             _log.LogInformation($"Returning {responses.Count} IpAddressDetails from request for {ipAddressDetailsRequests.Count}");

@@ -63,45 +63,20 @@ namespace MailCheck.Intelligence.ReverseDnsBackfiller
                 .AddTransient<IAmazonSimpleNotificationService, AmazonSimpleNotificationServiceClient>();
         }
 
-
         private static ILookupClient CreateLookupClient(IServiceProvider provider)
         {
-            return RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-                ? new LookupClient(NameServer.GooglePublicDns, NameServer.GooglePublicDnsIPv6)
-                {
-                    Timeout = provider.GetRequiredService<IEnricherConfig>().DnsRecordLookupTimeout
-                }
-                : new LookupClient(provider.GetService<IDnsNameServerProvider>().GetNameServers()
-                    .Select(_ => new IPEndPoint(_, 53)).ToArray())
-                {
-                    Timeout = provider.GetRequiredService<IEnricherConfig>().DnsRecordLookupTimeout,
-                    UseTcpOnly = true,
-                };
+            IPEndPoint[] nameservers = provider.GetService<IDnsNameServerProvider>()
+                .GetNameServers()
+                .Select(_ => new IPEndPoint(_, 53))
+                .ToArray();
+
+            LookupClientOptions options = new LookupClientOptions(nameservers)
+            {
+                Timeout = provider.GetRequiredService<IEnricherConfig>().DnsRecordLookupTimeout,
+                UseTcpOnly = true,
+            };
+
+            return new LookupClient(options);
         }
-
-        //private static ILookupClient CreateLookupClient(IServiceProvider serviceProvider)
-        //{
-        //    bool runningWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-
-        //    if (runningWindows)
-        //    {
-        //        //return new LookupClient(NameServer.GooglePublicDns, NameServer.GooglePublicDnsIPv6)
-        //        return new LookupClient()
-        //        {
-        //            Timeout = serviceProvider.GetRequiredService<IEnricherConfig>().DnsRecordLookupTimeout
-        //        };
-        //    }
-
-        //    IDnsNameServerProvider dnsNameServerProvider = serviceProvider.GetService<IDnsNameServerProvider>();
-        //    TimeSpan dnsRecordLookupTimeout = serviceProvider.GetRequiredService<IEnricherConfig>().DnsRecordLookupTimeout;
-        //    List<IPAddress> nameServers = dnsNameServerProvider.GetNameServers();
-        //    IPEndPoint[] endPoints = nameServers.Select(_ => new IPEndPoint(_, 53)).ToArray();
-
-        //    return new LookupClient(endPoints)
-        //    {
-        //        Timeout = dnsRecordLookupTimeout,
-        //        UseTcpOnly = true,
-        //    };
-        //}
     }
 }

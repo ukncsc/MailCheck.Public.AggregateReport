@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using DnsClient;
@@ -9,7 +8,6 @@ using FakeItEasy;
 using MailCheck.AggregateReport.Contracts.IpIntelligence;
 using MailCheck.Intelligence.Enricher.ReverseDns.Dns;
 using MailCheck.Intelligence.Enricher.ReverseDns.Processor;
-using MailCheck.Intelligence.Enricher.ReverseDns.PublicSuffix;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 
@@ -19,160 +17,153 @@ namespace MailCheck.Intelligence.Enricher.Test
     public class ReverseDnsLookupTests
     {
         private IDnsResolver _dnsResolver;
-        private TestLogger<ReverseDnsLookup> _log;
-        private IOrganisationalDomainProvider _organisationalDomainProvider;
+        private ILogger<ReverseDnsLookup> _log;
+        private ReverseDnsLookup _reverseDnsLookup;
 
         [SetUp]
         public void SetUp()
         {
             _dnsResolver = A.Fake<IDnsResolver>();
-            _organisationalDomainProvider = A.Fake<IOrganisationalDomainProvider>();
-            _log = new TestLogger<ReverseDnsLookup>();
+            _log = A.Fake<ILogger<ReverseDnsLookup>>();
+            _reverseDnsLookup = new ReverseDnsLookup(_dnsResolver, _log);
         }
 
-        [TestCase("192.168.0.x1")]
-        [TestCase(":x:ffff:c0a8:1")]
-        public async Task ItShouldReturnEmptyListForBadIpAddress(string ipAddress)
+        [Test]
+        public async Task LookupReturnsInconclusiveForBadlyFormattedIpAddress()
         {
-            var reverseDnsLookup = new ReverseDnsLookup(_dnsResolver, _log);
-            ReverseDnsResult result = await reverseDnsLookup.Lookup(ipAddress);
-            Assert.That(result.ForwardResponses.Count, Is.EqualTo(0));
-            Assert.IsNull(result.OriginalIpAddress);
-        }
+            ReverseDnsResult reverseDnsResult = await _reverseDnsLookup.Lookup("not an ip address");
 
-        [TestCase("192.168.0.1")]
-        [TestCase("::ffff:c0a8:1")]
-        public async Task ItShouldLogErrorWhenUnableToDoLookupForPtr(string ipAddress)
-        {
-            ReverseDnsQueryResponse response = new ReverseDnsQueryResponse(true, "Something has gone wrong!", null);
-
-            A.CallTo(() => _dnsResolver.QueryPtrAsync(A<IPAddress>._)).Returns(response);
-
-            var reverseDnsLookup = new ReverseDnsLookup(_dnsResolver, _log);
-
-            ReverseDnsResult result = await reverseDnsLookup.Lookup(ipAddress);
-
-            Assert.That(_log.Warnings.Count, Is.EqualTo(1));
-            Assert.That(result.ForwardResponses.Count, Is.EqualTo(0));
-            Assert.IsNull(result.OriginalIpAddress);
+            Assert.True(reverseDnsResult.IsInconclusive);
+            Assert.Null(reverseDnsResult.ForwardResponses);
         }
 
         [TestCase("192.168.0.1")]
-        [TestCase("::ffff:c0a8:1")]
-        public async Task ItShouldLogErrorWhenValidPtrButFailsOnForwardLookup(string ipAddress)
+        [TestCase("2001:1:2:3:4:5:6:7")]
+        public async Task LookupReturnsEmptyForPtrServerFailure(string ipAddress)
         {
-            ReverseDnsQueryResponse ptrDnsQueryResponse = new ReverseDnsQueryResponse(false, string.Empty, new List<string>() { "google.com" });
-            ReverseDnsQueryResponse addressDnsQueryResponse = new ReverseDnsQueryResponse(true, "Something has gone wrong!", null);
-
-            A.CallTo(() => _dnsResolver.QueryPtrAsync(A<IPAddress>._)).Returns(ptrDnsQueryResponse);
-            A.CallTo(() => _dnsResolver.QueryAddressAsync<ARecord>(A<string>._, QueryType.A)).Returns(addressDnsQueryResponse);
-            A.CallTo(() => _dnsResolver.QueryAddressAsync<AaaaRecord>(A<string>._, QueryType.AAAA)).Returns(addressDnsQueryResponse);
-
-            var reverseDnsLookup = new ReverseDnsLookup(_dnsResolver, _log);
-
-            ReverseDnsResult reverseDnsResult = await reverseDnsLookup.Lookup(ipAddress);
-
-            Assert.That(_log.Warnings.Count, Is.EqualTo(1));
-            Assert.That(reverseDnsResult.ForwardResponses.Count, Is.EqualTo(0));
-        }
-
-        [TestCase("192.168.0.1")]
-        [TestCase("::ffff:c0a8:1")]
-        public async Task ItShouldOnlyProcessValidLookupsAndNotStopWhenInvalid(string ipAddress)
-        {
-            string googleHostName = "google.com";
-            string googleIp1 = "192.168.0.1";
-            string yahooHostName = "yahoo.com";
-
-            ReverseDnsQueryResponse ptrDnsQueryResponse = new ReverseDnsQueryResponse(false, string.Empty, new List<string>() { googleHostName, yahooHostName });
-            ReverseDnsQueryResponse host1AddressDnsQueryResponse = new ReverseDnsQueryResponse(false, string.Empty, new List<string>() { googleIp1 });
-            ReverseDnsQueryResponse host2AaddressDnsQueryResponse = new ReverseDnsQueryResponse(true, "Something has gone wrong!", null);
-
+            ReverseDnsQueryResponse ptrDnsQueryResponse = new ReverseDnsQueryResponse(true, "Server Failure", null, null);
             A.CallTo(() => _dnsResolver.QueryPtrAsync(A<IPAddress>._)).Returns(ptrDnsQueryResponse);
 
-            //setup for only host1
-            A.CallTo(() => _dnsResolver.QueryAddressAsync<ARecord>(googleHostName, QueryType.A)).Returns(host1AddressDnsQueryResponse);
-            A.CallTo(() => _dnsResolver.QueryAddressAsync<AaaaRecord>(googleHostName, QueryType.AAAA)).Returns(host1AddressDnsQueryResponse);
+            ReverseDnsResult reverseDnsResult = await _reverseDnsLookup.Lookup(ipAddress);
 
-            //setup for only host1
-            A.CallTo(() => _dnsResolver.QueryAddressAsync<ARecord>(yahooHostName, QueryType.A)).Returns(host2AaddressDnsQueryResponse);
-            A.CallTo(() => _dnsResolver.QueryAddressAsync<AaaaRecord>(yahooHostName, QueryType.AAAA)).Returns(host2AaddressDnsQueryResponse);
-
-            var reverseDnsLookup = new ReverseDnsLookup(_dnsResolver, _log);
-
-            ReverseDnsResult reverseDnsResults = await reverseDnsLookup.Lookup(ipAddress);
-
-            Assert.That(_log.Warnings.Count, Is.EqualTo(1));
-
-            Assert.That(reverseDnsResults.ForwardResponses.Count, Is.EqualTo(1));
-            Assert.That(reverseDnsResults.ForwardResponses[0].Host, Is.EqualTo(googleHostName));
-            Assert.That(reverseDnsResults.ForwardResponses[0].IpAddresses.Count, Is.EqualTo(1));
-            Assert.That(reverseDnsResults.ForwardResponses[0].IpAddresses[0], Is.EqualTo(googleIp1));
+            Assert.False(reverseDnsResult.IsInconclusive);
+            Assert.IsEmpty(reverseDnsResult.ForwardResponses);
         }
 
         [TestCase("192.168.0.1")]
-        [TestCase("::ffff:c0a8:1")]
-        public async Task ItShouldProcessAllValidLookups(string ipAddress)
+        [TestCase("2001:1:2:3:4:5:6:7")]
+        public async Task LookupReturnsEmptyForPtrNonExistentDomain(string ipAddress)
         {
-            string googleHostName = "google.com";
-            string googleIp1 = "192.168.0.1";
-            string googleIp2 = "192.168.0.2";
-
-            string yahooHostName = "yahoo.com";
-            string yahooIp1 = "192.168.1.1";
-
-            ReverseDnsQueryResponse ptrDnsQueryResponse = new ReverseDnsQueryResponse(false, string.Empty, new List<string>() { googleHostName, yahooHostName });
-            ReverseDnsQueryResponse googleAddressDnsQueryResponse = new ReverseDnsQueryResponse(false, string.Empty, new List<string>() { googleIp1, googleIp2 });
-            ReverseDnsQueryResponse yahooAddressDnsQueryResponse = new ReverseDnsQueryResponse(false, string.Empty, new List<string>() { yahooIp1 });
-
+            ReverseDnsQueryResponse ptrDnsQueryResponse = new ReverseDnsQueryResponse(true, "Non-Existent Domain", null, null);
             A.CallTo(() => _dnsResolver.QueryPtrAsync(A<IPAddress>._)).Returns(ptrDnsQueryResponse);
-            A.CallTo(() => _dnsResolver.QueryAddressAsync<ARecord>(googleHostName, QueryType.A)).Returns(googleAddressDnsQueryResponse);
-            A.CallTo(() => _dnsResolver.QueryAddressAsync<AaaaRecord>(googleHostName, QueryType.AAAA)).Returns(googleAddressDnsQueryResponse);
-            A.CallTo(() => _dnsResolver.QueryAddressAsync<ARecord>(yahooHostName, QueryType.A)).Returns(yahooAddressDnsQueryResponse);
-            A.CallTo(() => _dnsResolver.QueryAddressAsync<AaaaRecord>(yahooHostName, QueryType.AAAA)).Returns(yahooAddressDnsQueryResponse);
 
-            var reverseDnsLookup = new ReverseDnsLookup(_dnsResolver, _log);
+            ReverseDnsResult reverseDnsResult = await _reverseDnsLookup.Lookup(ipAddress);
 
-            ReverseDnsResult reverseDnsResult = await reverseDnsLookup.Lookup(ipAddress);
+            Assert.False(reverseDnsResult.IsInconclusive);
+            Assert.IsEmpty(reverseDnsResult.ForwardResponses);
+        }
 
-            Assert.That(_log.Errors.Count, Is.EqualTo(0));
-            Assert.That(_log.Warnings.Count, Is.EqualTo(0));
+        [TestCase("192.168.0.1")]
+        [TestCase("2001:1:2:3:4:5:6:7")]
+        public async Task LookupReturnsInconclusiveForPtrError(string ipAddress)
+        {
+            ReverseDnsQueryResponse ptrDnsQueryResponse = new ReverseDnsQueryResponse(true, "Some other error", null, null);
+            A.CallTo(() => _dnsResolver.QueryPtrAsync(A<IPAddress>._)).Returns(ptrDnsQueryResponse);
 
-            Assert.That(reverseDnsResult.ForwardResponses.Count, Is.EqualTo(2));
-            Assert.That(reverseDnsResult.ForwardResponses[0].Host, Is.EqualTo(googleHostName));
-            Assert.That(reverseDnsResult.ForwardResponses[0].IpAddresses.Count, Is.EqualTo(2));
-            Assert.That(reverseDnsResult.ForwardResponses[0].IpAddresses[0], Is.EqualTo(googleIp1));
-            Assert.That(reverseDnsResult.ForwardResponses[0].IpAddresses[1], Is.EqualTo(googleIp2));
-            Assert.That(reverseDnsResult.ForwardResponses[1].Host, Is.EqualTo(yahooHostName));
-            Assert.That(reverseDnsResult.ForwardResponses[1].IpAddresses.Count, Is.EqualTo(1));
-            Assert.That(reverseDnsResult.ForwardResponses[1].IpAddresses[0], Is.EqualTo(yahooIp1));
+            ReverseDnsResult reverseDnsResult = await _reverseDnsLookup.Lookup(ipAddress);
+
+            Assert.True(reverseDnsResult.IsInconclusive);
+            Assert.IsNull(reverseDnsResult.ForwardResponses);
+        }
+
+        [TestCase("192.168.0.1")]
+        [TestCase("2001:1:2:3:4:5:6:7")]
+        public async Task LookupReturnsEmptyResponseForForwardServerFailure(string ipAddress)
+        {
+            ReverseDnsQueryResponse ptrDnsQueryResponse = new ReverseDnsQueryResponse(false, null, null, new List<string> { "testHost" });
+            A.CallTo(() => _dnsResolver.QueryPtrAsync(A<IPAddress>._)).Returns(ptrDnsQueryResponse);
+
+            ReverseDnsQueryResponse forwardDnsQueryResponse = new ReverseDnsQueryResponse(true, "Server Failure", null, null);
+            A.CallTo(() => _dnsResolver.QueryAddressAsync<ARecord>("testHost", QueryType.A)).Returns(forwardDnsQueryResponse);
+            A.CallTo(() => _dnsResolver.QueryAddressAsync<AaaaRecord>("testHost", QueryType.AAAA)).Returns(forwardDnsQueryResponse);
+
+            ReverseDnsResult reverseDnsResult = await _reverseDnsLookup.Lookup(ipAddress);
+
+            Assert.False(reverseDnsResult.IsInconclusive);
+            Assert.AreEqual(1, reverseDnsResult.ForwardResponses.Count);
+            Assert.IsEmpty(reverseDnsResult.ForwardResponses[0].IpAddresses);
+        }
+
+        [TestCase("192.168.0.1")]
+        [TestCase("2001:1:2:3:4:5:6:7")]
+        public async Task LookupReturnsEmptyForForwardNonExistentDomain(string ipAddress)
+        {
+            ReverseDnsQueryResponse ptrDnsQueryResponse = new ReverseDnsQueryResponse(false, null, null, new List<string> { "testHost" });
+            A.CallTo(() => _dnsResolver.QueryPtrAsync(A<IPAddress>._)).Returns(ptrDnsQueryResponse);
+
+            ReverseDnsQueryResponse forwardDnsQueryResponse = new ReverseDnsQueryResponse(true, "Non-Existent Domain", null, null);
+            A.CallTo(() => _dnsResolver.QueryAddressAsync<ARecord>("testHost", QueryType.A)).Returns(forwardDnsQueryResponse);
+            A.CallTo(() => _dnsResolver.QueryAddressAsync<AaaaRecord>("testHost", QueryType.AAAA)).Returns(forwardDnsQueryResponse);
+
+            ReverseDnsResult reverseDnsResult = await _reverseDnsLookup.Lookup(ipAddress);
+
+            Assert.False(reverseDnsResult.IsInconclusive);
+            Assert.AreEqual(1, reverseDnsResult.ForwardResponses.Count);
+            Assert.IsEmpty(reverseDnsResult.ForwardResponses[0].IpAddresses);
+        }
+
+        [TestCase("192.168.0.1")]
+        [TestCase("2001:1:2:3:4:5:6:7")]
+        public async Task LookupReturnsInconclusiveForForwardError(string ipAddress)
+        {
+            ReverseDnsQueryResponse ptrDnsQueryResponse = new ReverseDnsQueryResponse(false, null, null, new List<string> { "testHost" });
+            A.CallTo(() => _dnsResolver.QueryPtrAsync(A<IPAddress>._)).Returns(ptrDnsQueryResponse);
+
+            ReverseDnsQueryResponse forwardDnsQueryResponse = new ReverseDnsQueryResponse(true, "Some other error", null, null);
+            A.CallTo(() => _dnsResolver.QueryAddressAsync<ARecord>("testHost", QueryType.A)).Returns(forwardDnsQueryResponse);
+            A.CallTo(() => _dnsResolver.QueryAddressAsync<AaaaRecord>("testHost", QueryType.AAAA)).Returns(forwardDnsQueryResponse);
+
+            ReverseDnsResult reverseDnsResult = await _reverseDnsLookup.Lookup(ipAddress);
+
+            Assert.True(reverseDnsResult.IsInconclusive);
+            Assert.IsNull(reverseDnsResult.ForwardResponses);
+        }
+
+        [TestCase("192.168.0.1")]
+        [TestCase("2001:1:2:3:4:5:6:7")]
+        public async Task LookupReturnsInconclusiveOnException(string ipAddress)
+        {
+            A.CallTo(() => _dnsResolver.QueryPtrAsync(A<IPAddress>._)).Throws(new Exception());
+
+            ReverseDnsResult reverseDnsResult = await _reverseDnsLookup.Lookup(ipAddress);
+
+            Assert.True(reverseDnsResult.IsInconclusive);
+            Assert.IsNull(reverseDnsResult.ForwardResponses);
+        }
+
+        [TestCase("192.168.0.1")]
+        [TestCase("2001:1:2:3:4:5:6:7")]
+        public async Task LookupReturnsForwardResponses(string ipAddress)
+        {
+            ReverseDnsQueryResponse ptrDnsQueryResponse = new ReverseDnsQueryResponse(false, null, null, new List<string> { "testHost1", "testHost2" });
+            A.CallTo(() => _dnsResolver.QueryPtrAsync(A<IPAddress>._)).Returns(ptrDnsQueryResponse);
+
+            ReverseDnsQueryResponse forwardDnsQueryResponse1 = new ReverseDnsQueryResponse(false, null, null, new List<string> { "1.1.1.1", "2.2.2.2" });
+            A.CallTo(() => _dnsResolver.QueryAddressAsync<ARecord>("testHost1", QueryType.A)).Returns(forwardDnsQueryResponse1);
+            A.CallTo(() => _dnsResolver.QueryAddressAsync<AaaaRecord>("testHost1", QueryType.AAAA)).Returns(forwardDnsQueryResponse1);
+
+            ReverseDnsQueryResponse forwardDnsQueryResponse2 = new ReverseDnsQueryResponse(false, null, null, new List<string> { "3.3.3.3", "4.4.4.4" });
+            A.CallTo(() => _dnsResolver.QueryAddressAsync<ARecord>("testHost2", QueryType.A)).Returns(forwardDnsQueryResponse2);
+            A.CallTo(() => _dnsResolver.QueryAddressAsync<AaaaRecord>("testHost2", QueryType.AAAA)).Returns(forwardDnsQueryResponse2);
+
+            ReverseDnsResult reverseDnsResult = await _reverseDnsLookup.Lookup(ipAddress);
+
+            Assert.False(reverseDnsResult.IsInconclusive);
+            Assert.AreEqual(2, reverseDnsResult.ForwardResponses.Count);
+            Assert.AreEqual("1.1.1.1", reverseDnsResult.ForwardResponses[0].IpAddresses[0]);
+            Assert.AreEqual("2.2.2.2", reverseDnsResult.ForwardResponses[0].IpAddresses[1]);
+            Assert.AreEqual("3.3.3.3", reverseDnsResult.ForwardResponses[1].IpAddresses[0]);
+            Assert.AreEqual("4.4.4.4", reverseDnsResult.ForwardResponses[1].IpAddresses[1]);
         }
     }
-
-    #region test infrastructure
-    public class TestLogger<T> : ILogger<T>
-    {
-        private readonly List<Tuple<LogLevel, string>> _logEntries = new List<Tuple<LogLevel, string>>();
-
-        public List<string> Warnings => _logEntries.Where(_ => _.Item1 == LogLevel.Warning).Select(_ => _.Item2).ToList();
-        public List<string> Information => _logEntries.Where(_ => _.Item1 == LogLevel.Information).Select(_ => _.Item2).ToList();
-        public List<string> Errors => _logEntries.Where(_ => _.Item1 == LogLevel.Error).Select(_ => _.Item2).ToList();
-        public List<string> Debug => _logEntries.Where(_ => _.Item1 == LogLevel.Debug).Select(_ => _.Item2).ToList();
-
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
-        {
-            _logEntries.Add(Tuple.Create(logLevel, formatter(state, exception)));
-        }
-
-        public bool IsEnabled(LogLevel logLevel)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IDisposable BeginScope<TState>(TState state)
-        {
-            throw new NotImplementedException();
-        }
-    }
-    #endregion
 }

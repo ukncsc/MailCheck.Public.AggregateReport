@@ -38,17 +38,18 @@ namespace MailCheck.Intelligence.Enricher.Test
 
             ILookupClient CreateLookupClient(IServiceProvider provider)
             {
-                return RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-                    ? new LookupClient(NameServer.GooglePublicDns, NameServer.GooglePublicDnsIPv6)
-                    {
-                        Timeout = provider.GetRequiredService<IEnricherConfig>().DnsRecordLookupTimeout
-                    }
-                    : new LookupClient(provider.GetService<IDnsNameServerProvider>().GetNameServers()
-                        .Select(_ => new IPEndPoint(_, 53)).ToArray())
-                    {
-                        Timeout = provider.GetRequiredService<IEnricherConfig>().DnsRecordLookupTimeout,
-                        UseTcpOnly = true,
-                    };
+                IPEndPoint[] nameservers = provider.GetService<IDnsNameServerProvider>()
+                    .GetNameServers()
+                    .Select(_ => new IPEndPoint(_, 53))
+                    .ToArray();
+
+                LookupClientOptions options = new LookupClientOptions(nameservers)
+                {
+                    Timeout = provider.GetRequiredService<IEnricherConfig>().DnsRecordLookupTimeout,
+                    UseTcpOnly = true,
+                };
+
+                return new LookupClient(options);
             }
 
             _reverseDnsProvider = new ServiceCollection()

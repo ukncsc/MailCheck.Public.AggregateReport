@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <Description>Where is this saved?</Description>
     <NeutralLanguage>ar</NeutralLanguage>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -12,10 +12,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MailCheck.Common.Data" Version="4.0.0" />
-    <PackageReference Include="MailCheck.Common.Environment" Version="4.0.0" />
-    <PackageReference Include="MailCheck.Common.Logging" Version="4.0.0" />
-    <PackageReference Include="MailCheck.Common.Util" Version="4.0.0" />
+    <PackageReference Include="MailCheck.Common.Data" Version="12.0.0" />
+    <PackageReference Include="MailCheck.Common.Environment" Version="12.0.0" />
+    <PackageReference Include="MailCheck.Common.Logging" Version="12.0.0" />
+    <PackageReference Include="MailCheck.Common.Util" Version="12.0.0" />
     <PackageReference Include="Scrutor" Version="3.3.0" />
   </ItemGroup>
 

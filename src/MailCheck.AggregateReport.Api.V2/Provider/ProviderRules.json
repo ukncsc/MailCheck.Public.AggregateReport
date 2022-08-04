@@ -239,6 +239,10 @@
         {
             "provider": "ARC-Forwarded",
             "mapping": "Forwarded email untrusted but delivered due to ARC"
+        },
+        {
+            "provider": "ReverseDnsFail",
+            "mapping": "Suspicious emails failing reverse DNS checks"
         }
     ],
 
@@ -435,6 +439,10 @@ Technically these emails fail DKIM but can be considered normal forwarded emails
     {
       "provider": "MailChimp",
       "mapping": "[Mail Chimp advice on configuring SPF and DKIM](https://kb.mailchimp.com/accounts/email-authentication/set-up-custom-domain-authentication-dkim-and-spf)"
+    },
+    {
+        "provider": "ReverseDnsFail",
+        "mapping": "Mail Check has grouped traffic from IP addresses that are failing a Forward Confirmed DNS check. These are highly likely to be malicious emails using your email domain."
     }
   ]
 }

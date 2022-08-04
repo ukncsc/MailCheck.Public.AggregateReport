@@ -40,7 +40,6 @@ namespace MailCheck.AggregateReport.Contracts
             bool arc,
             bool otherOverrideReason) : base(id)
         {
-            Id = id;
             ReporterOrgName = reporterOrgName;
             ReportId = reportId;
             EffectiveDate = effectiveDate;
@@ -74,7 +73,6 @@ namespace MailCheck.AggregateReport.Contracts
             OtherOverrideReason = otherOverrideReason;
         }
 
-        public string Id { get; }
         public string ReporterOrgName { get; }
         public string ReportId { get; }
         public DateTime EffectiveDate { get; }

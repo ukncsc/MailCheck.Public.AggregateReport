@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleSystemsManagement;
 using DnsClient;
@@ -52,6 +51,7 @@ namespace MailCheck.Intelligence.Enricher
                 .AddTransient<IIpAddressLookup, IpAddressLookup>()
                 .AddTransient<IAsInfoProvider, AsInfoProvider>()
                 .AddTransient<IReverseDnsProvider, ReverseDnsProvider>()
+                .AddTransient<IAuditTrailParser, AuditTrailParser>()
                 .AddTransient<IReverseDnsLookup, ReverseDnsLookup>()
                 .AddTransient<IOrganisationalDomainProvider, OrganisationalDomainProvider>()
                 .AddTransient<IPublicSuffixDao, PublicSuffixDao>()
@@ -65,16 +65,15 @@ namespace MailCheck.Intelligence.Enricher
                 .AddTransient<IHandle<AggregateReportRecordBatch>, AggregateReportEnricher>()
                 .AddTransient<IAmazonSimpleNotificationService, AmazonSimpleNotificationServiceClient>()
                 .AddTransient<IAggregateReportRecordEnrichedFactory, AggregateReportRecordEnrichedFactory>()
-                .AddSingleton<IProviderResolver, ProviderResolver.ProviderResolver>()
-                .AddTransient<IMessagePublisher, SnsMessagePublisher>();
+                .AddSingleton<IProviderResolver, ProviderResolver.ProviderResolver>();
         }
 
         private static void RegisterBlocklistSources(IServiceCollection serviceCollection)
         {
-            string sources = File.ReadAllText("Blocklist/blockListSources.json");
-            List<BlockListSource> blocklistSources = JsonConvert.DeserializeObject<List<BlockListSource>>(sources);
+            string sources = File.ReadAllText("Blocklist/blocklistSources.json");
+            List<BlocklistSource> blocklistSources = JsonConvert.DeserializeObject<List<BlocklistSource>>(sources);
 
-            foreach (BlockListSource blockListSource in blocklistSources)
+            foreach (BlocklistSource blockListSource in blocklistSources)
             {
                 serviceCollection.AddTransient<IBlocklistSourceProcessor>(x => new BlocklistSourceProcessor(blockListSource, x.GetRequiredService<ILookupClient>(), x.GetRequiredService<ILogger<BlocklistSourceProcessor>>()));
             }
@@ -82,41 +81,25 @@ namespace MailCheck.Intelligence.Enricher
 
         private static ILookupClient CreateLookupClient(IServiceProvider provider)
         {
-            return RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-                ? new LookupClient(NameServer.GooglePublicDns, NameServer.GooglePublicDnsIPv6)
-                {
-                    Timeout = provider.GetRequiredService<IEnricherConfig>().DnsRecordLookupTimeout
-                }
-                : new LookupClient(provider.GetService<IDnsNameServerProvider>().GetNameServers()
-                    .Select(_ => new IPEndPoint(_, 53)).ToArray())
-                {
-                    Timeout = provider.GetRequiredService<IEnricherConfig>().DnsRecordLookupTimeout,
-                    UseTcpOnly = true,
-                };
+            IPEndPoint[] nameServers = provider
+                .GetService<IDnsNameServerProvider>()
+                .GetNameServers()
+                .Select(_ => new IPEndPoint(_, 53))
+                .ToArray();
+
+            LookupClientOptions options = new LookupClientOptions(nameServers)
+            {
+                Timeout = provider.GetRequiredService<IEnricherConfig>().DnsRecordLookupTimeout,
+                UseTcpOnly = true,
+                ContinueOnDnsError = false,
+                ContinueOnEmptyResponse = false,
+                EnableAuditTrail = true,
+                UseCache = false,
+            };
+
+            LookupClient lookupClient = new LookupClient(options);
+
+            return new AuditTrailLoggingLookupClientWrapper(lookupClient, provider.GetService<IAuditTrailParser>(), provider.GetService<ILogger<AuditTrailLoggingLookupClientWrapper>>());
         }
-
-        //private static ILookupClient CreateLookupClient(IServiceProvider serviceProvider)
-        //{
-        //    bool runningWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-
-        //    if (runningWindows)
-        //    {
-        //        return new LookupClient(NameServer.GooglePublicDns, NameServer.GooglePublicDnsIPv6)
-        //        {
-        //            Timeout = serviceProvider.GetRequiredService<IEnricherConfig>().DnsRecordLookupTimeout
-        //        };
-        //    }
-
-        //    IDnsNameServerProvider dnsNameServerProvider = serviceProvider.GetService<IDnsNameServerProvider>();
-        //    TimeSpan dnsRecordLookupTimeout = serviceProvider.GetRequiredService<IEnricherConfig>().DnsRecordLookupTimeout;
-        //    List<IPAddress> nameServers = dnsNameServerProvider.GetNameServers();
-        //    IPEndPoint[] endPoints = nameServers.Select(_ => new IPEndPoint(_, 53)).ToArray();
-
-        //    return new LookupClient(endPoints)
-        //    {
-        //        Timeout = dnsRecordLookupTimeout,
-        //        UseTcpOnly = true,
-        //    };
-        //}
     }
 }

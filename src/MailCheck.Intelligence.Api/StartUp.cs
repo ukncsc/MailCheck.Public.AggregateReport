@@ -63,7 +63,6 @@ namespace MailCheck.Intelligence.Api
             }
 
             services
-                .AddLogging()
                 .AddHealthChecks(checks =>
                     checks.AddValueTaskCheck("HTTP Endpoint", () =>
                         new ValueTask<IHealthCheckResult>(HealthCheckResult.Healthy("Ok"))))
@@ -82,14 +81,14 @@ namespace MailCheck.Intelligence.Api
                 .AddMailCheckAuthenticationClaimsPrincipleClient()
                 .AddSerilogLogging()
                 .AddAudit("Aggregate-Report-Api-V2")
-                .AddMvc(config =>
+                .AddControllers(config =>
                 {
                     AuthorizationPolicy policy = new AuthorizationPolicyBuilder()
                         .RequireAuthenticatedUser()
                         .Build();
                     config.Filters.Add(new AuthorizeFilter(policy));
-                })
-                .AddJsonOptions(options =>
+                }).SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0)
+                .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Serialize;
                     options.SerializerSettings.Converters.Add(new StringEnumConverter());
@@ -103,7 +102,7 @@ namespace MailCheck.Intelligence.Api
 
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (RunInDevMode())
             {
@@ -116,7 +115,11 @@ namespace MailCheck.Intelligence.Api
                .UseAuthentication()
                .UseMiddleware<AuditLoggingMiddleware>()
                .UseMiddleware<UnhandledExceptionMiddleware>()
-               .UseMvc();
+               .UseRouting()
+               .UseEndpoints(endpoints => {
+                   endpoints.MapDefaultControllerRoute();
+                   endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+               });
         }
 
         private bool RunInDevMode()
@@ -129,7 +132,7 @@ namespace MailCheck.Intelligence.Api
         {
             options.AddPolicy(CorsPolicyName, builder =>
                 builder
-                    .AllowAnyOrigin()
+                    .SetIsOriginAllowed(_ => true)
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());

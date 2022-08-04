@@ -8,6 +8,7 @@ using MailCheck.AggregateReport.Parser.Config;
 using MailCheck.AggregateReport.Parser.Domain;
 using MailCheck.AggregateReport.Parser.Domain.Report;
 using MailCheck.AggregateReport.Parser.Exceptions;
+using MailCheck.AggregateReport.Parser.Mapping;
 using MailCheck.AggregateReport.Parser.Parser;
 using MailCheck.AggregateReport.Parser.Persistence;
 using MailCheck.AggregateReport.Parser.Publisher;
@@ -62,90 +63,105 @@ namespace MailCheck.AggregateReport.Parser.Processor
                     $"Processing report in s3 object {s3SourceInfo.BucketName}/{s3SourceInfo.ObjectName}, " +
                     $"message Id: {s3SourceInfo.MessageId}, request Id: {s3SourceInfo.RequestId}.");
 
+                EmailMessageInfo emailMessageInfo = null;
                 try
                 {
-                    EmailMessageInfo emailMessageInfo = await _s3Client.GetEmailMessage(s3SourceInfo);
-                    using (_logger.BeginScope(new Dictionary<string, object>
+                    emailMessageInfo = await _s3Client.GetEmailMessage(s3SourceInfo);
+
+                    _logger.LogDebug(
+                        $"Successfully retrieved report in s3 object {s3SourceInfo.BucketName}/{s3SourceInfo.ObjectName}, " +
+                        $"message Id: {s3SourceInfo.MessageId}, request Id: {s3SourceInfo.RequestId}.");
+
+                    if (emailMessageInfo.EmailMetadata.FileSizeKb > _config.MaxS3ObjectSizeKilobytes)
                     {
-                        ["EmailAttachmentFileName"] = emailMessageInfo?.EmailMetadata?.Filename,
-                    }))
+                        _logger.LogWarning($"Didnt process report as size was {emailMessageInfo.EmailMetadata.FileSizeKb} KB and MaxS3ObjectSizeKilobytes of {_config.MaxS3ObjectSizeKilobytes} KB was exceeded");
+
+                        // Need to throw a non-AggregateReportParserException here so that the message 
+                        // drops to the next queue to be picked up by the large processor
+                        throw new ApplicationException("S3 object too large to process"); 
+                    }
+                    else
                     {
+                        AggregateReportInfo aggregateReportInfo = null;
+                        try
+                        {
+                            aggregateReportInfo = _parser.Parse(emailMessageInfo);
+                        }
+                        catch (Exception e)
+                        {
+                            _logger.LogWarning(e,
+                                $"Bad formatting in attachment {emailMessageInfo.EmailMetadata?.Filename}");
+                            throw new AggregateReportFormatException("Exception thrown during parse", e);
+                        }
+                        finally
+                        {
+                            emailMessageInfo.EmailStream.Dispose();
+                            aggregateReportInfo?.AttachmentInfo.AttachmentStream.Dispose();
+                        }
 
                         _logger.LogDebug(
-                            $"Successfully retrieved report in s3 object {s3SourceInfo.BucketName}/{s3SourceInfo.ObjectName}, " +
+                            $"Successfully parsed report in s3 object {s3SourceInfo.BucketName}/{s3SourceInfo.ObjectName}, " +
                             $"message Id: {s3SourceInfo.MessageId}, request Id: {s3SourceInfo.RequestId}.");
 
-                        if (emailMessageInfo.EmailMetadata.FileSizeKb > _config.MaxS3ObjectSizeKilobytes)
+                        using (_logger.BeginScope(new Dictionary<string, object>
                         {
-                            _logger.LogWarning(
-                                $"Didnt process report in s3 object {s3SourceInfo.BucketName}/{s3SourceInfo.ObjectName} " +
-                                $" as MaxS3ObjectSizeKilobytes of {_config.MaxS3ObjectSizeKilobytes} Kb was exceeded, " +
-                                $"message Id: {s3SourceInfo.MessageId}, request Id: {s3SourceInfo.RequestId}.");
-                        }
-                        else
+                            ["EmailAttachmentFileName"] = aggregateReportInfo?.AttachmentInfo?.AttachmentMetadata?.Filename,
+                            ["AggregateReportInfoId"] = aggregateReportInfo?.Id,
+                            ["AggregateReportId"] = aggregateReportInfo?.AggregateReport?.ReportMetadata?.ReportId,
+                            ["AggregateReportOrgName"] = aggregateReportInfo?.AggregateReport?.ReportMetadata?.OrgName,
+                            ["AggregateReportDomain"] = aggregateReportInfo?.AggregateReport?.PolicyPublished?.Domain,
+                            ["AggregateReportEffectiveDate"] = aggregateReportInfo?.AggregateReport?.ReportMetadata?.Range?.EffectiveDate.ToDateTime().ToString("yyyy-MM-dd"),
+                        }))
+                        using (TransactionScope transactionScope = new TransactionScope(
+                            TransactionScopeOption.Required,
+                            new TransactionOptions
+                            {
+                                IsolationLevel = IsolationLevel.ReadCommitted,
+                                Timeout = TimeSpan.FromSeconds(300)
+                            },
+                            TransactionScopeAsyncFlowOption.Enabled))
                         {
-                            AggregateReportInfo aggregateReportInfo = null;
+                            string[] errors = aggregateReportInfo?.AggregateReport?.ReportMetadata?.Error ?? Array.Empty<string>();
+                            if (errors.Length > 0)
+                            {
+                                _logger.LogWarning($"Parsed report with errors: {Environment.NewLine}{string.Join(Environment.NewLine, errors)}");
+                            }
+
+                            _logger.LogInformation($"Extracted {aggregateReportInfo?.AggregateReport?.Records?.Length ?? 0} records from report");
+
                             try
                             {
-                                aggregateReportInfo = _parser.Parse(emailMessageInfo);
-                            }
-                            catch (Exception e)
-                            {
-                                _logger.LogWarning(e,
-                                    $"Bad formatting in attachment {emailMessageInfo.EmailMetadata?.Filename}");
-                                throw new AggregateReportFormatException("Exception thrown during parse", e);
-                            }
-                            finally
-                            {
-                                emailMessageInfo.EmailStream.Dispose();
-                                aggregateReportInfo?.AttachmentInfo.AttachmentStream.Dispose();
-                            }
-
-                            _logger.LogDebug(
-                                $"Successfully parsed report in s3 object {s3SourceInfo.BucketName}/{s3SourceInfo.ObjectName}, " +
-                                $"message Id: {s3SourceInfo.MessageId}, request Id: {s3SourceInfo.RequestId}.");
-
-                            using (_logger.BeginScope(new Dictionary<string, object>
-                            {
-                                ["AggregateReportInfoId"] = aggregateReportInfo?.Id,
-                                ["AggregateReportId"] = aggregateReportInfo?.AggregateReport?.ReportMetadata?.ReportId,
-                                ["AggregateReportOrgName"] = aggregateReportInfo?.AggregateReport?.ReportMetadata?.OrgName,
-                                ["AggregateReportDomain"] = aggregateReportInfo?.AggregateReport?.PolicyPublished?.Domain,
-                            }))
-                            using (TransactionScope transactionScope = new TransactionScope(
-                                TransactionScopeOption.Required,
-                                new TransactionOptions
-                                {
-                                    IsolationLevel = IsolationLevel.ReadCommitted,
-                                    Timeout = TimeSpan.FromSeconds(300)
-                                },
-                                TransactionScopeAsyncFlowOption.Enabled))
-                            {
-                                try
-                                {
-                                    aggregateReportInfo = await _persistor.Persist(aggregateReportInfo);
+                                aggregateReportInfo = await _persistor.Persist(aggregateReportInfo);
                                     
-                                    _logger.LogDebug(
-                                        $"Successfully persisted report in s3 object {s3SourceInfo.BucketName}/{s3SourceInfo.ObjectName}, " +
-                                        $"message Id: {s3SourceInfo.MessageId}, request Id: {s3SourceInfo.RequestId}.");
+                                _logger.LogDebug(
+                                    $"Successfully persisted report in s3 object {s3SourceInfo.BucketName}/{s3SourceInfo.ObjectName}, " +
+                                    $"message Id: {s3SourceInfo.MessageId}, request Id: {s3SourceInfo.RequestId}.");
 
-                                    await _publisher.Publish(aggregateReportInfo);
+                                await _publisher.Publish(aggregateReportInfo);
 
-                                    _logger.LogDebug(
-                                        $"Successfully published report/s in s3 object {s3SourceInfo.BucketName}/{s3SourceInfo.ObjectName}, " +
-                                        $"message Id: {s3SourceInfo.MessageId}, request Id: {s3SourceInfo.RequestId}.");
+                                _logger.LogDebug(
+                                    $"Successfully published report/s in s3 object {s3SourceInfo.BucketName}/{s3SourceInfo.ObjectName}, " +
+                                    $"message Id: {s3SourceInfo.MessageId}, request Id: {s3SourceInfo.RequestId}.");
 
-                                    transactionScope.Complete();
-                                }
-                                catch (Exception e) when (LogException(e))
-                                {
-                                }
+                                transactionScope.Complete();
+                            }
+                            catch (Exception e) when (LogException(e))
+                            {
                             }
                         }
                     }
+                    
                 }
                 catch (AggregateReportParserException)
                 {
+                }
+                finally
+                {
+                    try
+                    {
+                        emailMessageInfo?.EmailStream?.Dispose();
+                    }
+                    catch { }
                 }
             }
         }

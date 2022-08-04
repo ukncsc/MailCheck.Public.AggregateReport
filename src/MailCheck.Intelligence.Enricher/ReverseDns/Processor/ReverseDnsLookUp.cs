@@ -19,6 +19,9 @@ namespace MailCheck.Intelligence.Enricher.ReverseDns.Processor
 
     public class ReverseDnsLookup : IReverseDnsLookup
     {
+        private const string NonExistentDomainError = "Non-Existent Domain";
+        private const string ServerFailureError = "Server Failure";
+
         private readonly IDnsResolver _dnsResolver;
         private readonly ILogger<ReverseDnsLookup> _log;
 
@@ -30,105 +33,71 @@ namespace MailCheck.Intelligence.Enricher.ReverseDns.Processor
 
         public async Task<ReverseDnsResult> Lookup(string ipAddress)
         {
-            return IPAddress.TryParse(ipAddress, out IPAddress originalAddress)
-                ? await GetReverseDnsResult(originalAddress)
-                : ReverseDnsResult.InvalidReverseDnsResult;
-        }
-
-        private async Task<ReverseDnsResult> GetReverseDnsResult(IPAddress originalAddress)
-        {
-            int attempt = 0;
-            int maxAttempts = 5;
-
-            while (attempt < maxAttempts)
+            if(!IPAddress.TryParse(ipAddress, out IPAddress parsedIpAddress))
             {
-                Stopwatch stopwatch = Stopwatch.StartNew();
-                await Task.Delay(attempt * attempt * 1000);
-                attempt++;
-                
-                try
-                {
-                    ReverseDnsQueryResponse response = await _dnsResolver.QueryPtrAsync(originalAddress);
-                    
-                    if (response.HasError)
-                    {
-                        if (attempt < maxAttempts)
-                        {
-                           _log.LogInformation($"PTR lookup attempt {attempt} for ip {originalAddress} resulted in error and took {stopwatch.ElapsedMilliseconds} ms." +
-                                $"Error: {response.ErrorMessage ?? "Unknown Error"}");
-                            continue;
-                        }
-                        
-                        _log.LogWarning(
-                            $"PTR lookup attempt {attempt} for ip {originalAddress} resulted in error and took {stopwatch.ElapsedMilliseconds} ms." +
-                            $"Error: {response.ErrorMessage ?? "Unknown Error"}");
-
-                        return ReverseDnsResult.InvalidReverseDnsResult;
-                    } 
-                    
-                    _log.LogInformation($"PTR lookup attempt {attempt} for ip {originalAddress} resulted in success and took {stopwatch.ElapsedMilliseconds} ms.");
-
-                    List<string> hosts = response.Results;
-
-                    List<ReverseDnsResponse> forwardResponses = originalAddress.AddressFamily == AddressFamily.InterNetwork
-                        ? await GetDnsResponses<ARecord>(hosts, QueryType.A)
-                        : await GetDnsResponses<AaaaRecord>(hosts, QueryType.AAAA);
-
-                    return new ReverseDnsResult(originalAddress.ToString(), forwardResponses);
-                }
-                catch (Exception e)
-                {
-                    string errorMessage = $"PTR lookup attempt {attempt} of {maxAttempts} for ip {originalAddress} resulted in exception and took {stopwatch.ElapsedMilliseconds} ms.";
-
-                    if (attempt == maxAttempts)
-                    {
-                        _log.LogError(e, errorMessage);
-                    }
-                    else
-                    {
-                        _log.LogWarning(e, errorMessage);
-                    }
-                }
+                return ReverseDnsResult.Inconclusive(ipAddress);
             }
-            return ReverseDnsResult.InvalidReverseDnsResult;
-        }
 
-        private async Task<List<ReverseDnsResponse>> GetDnsResponses<T>(List<string> hosts, QueryType queryType)
-            where T : AddressRecord
-        {
-            List<ReverseDnsResponse> responses = new List<ReverseDnsResponse>();
-            foreach (var host in hosts)
+            Stopwatch stopwatch = Stopwatch.StartNew();
+
+            try
             {
-                List<string> ipAddresses = new List<string>();
-                if (!string.IsNullOrWhiteSpace(host))
-                {
-                    Stopwatch stopwatch = Stopwatch.StartNew();
-
-                    try
-                    {
-                        ReverseDnsQueryResponse forward = await _dnsResolver.QueryAddressAsync<T>(host, queryType);
-
-                        if (!forward.HasError)
-                        {
-                            ipAddresses.AddRange(forward.Results);
-                            responses.Add(new ReverseDnsResponse(host, ipAddresses));
-                            _log.LogInformation($"ReverseDns lookup for host {host} resulted in success and took {stopwatch.ElapsedMilliseconds} ms.");
-                        }
-                        else
-                        {
-                            _log.LogWarning(
-                                $"Failed to do dns query type: {queryType}. ReverseDns lookup for host {host} resulted in error: {forward.ErrorMessage ?? "Unknown error"}.");
-                        }
-                    }
+                ReverseDnsQueryResponse ptrResponse = await _dnsResolver.QueryPtrAsync(parsedIpAddress);
                     
-                    catch (Exception e)
+                if (ptrResponse.HasError)
+                {
+                    if (ptrResponse.ErrorMessage == ServerFailureError || ptrResponse.ErrorMessage == NonExistentDomainError)
                     {
-                        _log.LogWarning(e,$"ReverseDns lookup for host {host} resulted in exception and took {stopwatch.ElapsedMilliseconds} ms.");                
+                        _log.LogInformation($"PTR lookup for ip {ipAddress} resulted in {ptrResponse.ErrorMessage} error and took {stopwatch.ElapsedMilliseconds} ms.{Environment.NewLine}{ptrResponse.AuditTrail}");
+
+                        return new ReverseDnsResult(ipAddress, null);
                     }
 
+                    _log.LogWarning($"PTR lookup for ip {ipAddress} resulted in error and took {stopwatch.ElapsedMilliseconds} ms. Error: {ptrResponse.ErrorMessage ?? "Unknown Error"}.{Environment.NewLine}{ptrResponse.AuditTrail}");
+
+                    return ReverseDnsResult.Inconclusive(ipAddress);
                 }
+
+                List<string> hosts = ptrResponse.Results;
+
+                _log.LogInformation($"PTR lookup for ip {ipAddress} resulted in success returning {hosts.Count} hosts and took {stopwatch.ElapsedMilliseconds} ms.");
+
+                List<ReverseDnsResponse> forwardResponses = new List<ReverseDnsResponse>();
+     
+                foreach (string host in hosts)
+                {
+                    Stopwatch forwardStopwatch = Stopwatch.StartNew();
+                    if (!string.IsNullOrWhiteSpace(host))
+                    {
+                        ReverseDnsQueryResponse forwardResponse = parsedIpAddress.AddressFamily == AddressFamily.InterNetwork 
+                            ? await _dnsResolver.QueryAddressAsync<ARecord>(host, QueryType.A)
+                            : await _dnsResolver.QueryAddressAsync<AaaaRecord>(host, QueryType.AAAA);
+
+                        if (forwardResponse.HasError)
+                        {
+                            if (forwardResponse.ErrorMessage == ServerFailureError || forwardResponse.ErrorMessage == NonExistentDomainError)
+                            {
+                                _log.LogInformation($"DNS lookup for host {host} resulted in {forwardResponse.ErrorMessage} error and took {stopwatch.ElapsedMilliseconds} ms.{Environment.NewLine}{forwardResponse.AuditTrail}");
+                                forwardResponses.Add(new ReverseDnsResponse(host, new List<string>()));
+                                continue;
+                            }
+                            _log.LogWarning($"DNS lookup for host {host} resulted in error: {forwardResponse.ErrorMessage ?? "Unknown error"}.{Environment.NewLine}{forwardResponse.AuditTrail}");
+                            return ReverseDnsResult.Inconclusive(ipAddress);
+                        }
+
+                        forwardResponses.Add(new ReverseDnsResponse(host, forwardResponse.Results));
+                        _log.LogInformation($"DNS lookup for host {host} resulted in success and took {forwardStopwatch.ElapsedMilliseconds} ms.");
+                    }
+                }
+
+                return new ReverseDnsResult(ipAddress, forwardResponses);
             }
-            return responses;
+            catch (Exception e)
+            {
+                string errorMessage = $"Reverse DNS lookup for ip {ipAddress} resulted in exception and took {stopwatch.ElapsedMilliseconds} ms.";
+                _log.LogWarning(e, errorMessage);
+                return ReverseDnsResult.Inconclusive(ipAddress);
+            }
         }
     }
 }
